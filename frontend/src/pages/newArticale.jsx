@@ -5,9 +5,9 @@ import { useState } from "react";
 // import FormHelperText from "@mui/material/FormHelperText";
 // import FormControl from "@mui/material/FormControl";
 // import Select, { SelectChangeEvent } from "@mui/material/Select";
+import RichTextWithTranslate from "../components/richText"
 
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+
 import { FaFile } from "react-icons/fa";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
@@ -20,30 +20,7 @@ export default function NewArtical() {
 //     setAge(event.target.value);
 //   };
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-    ],
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-  ];
-
-  const [value, setValue] = useState("");
+  
 
   return (
     <div className="px-[150px] ">
@@ -74,15 +51,9 @@ export default function NewArtical() {
                 ' ></textarea>
             </div>
           </div> */}
-
-          <ReactQuill
-            theme="snow"
-            value={value}
-            onChange={setValue}
-            modules={modules}
-            formats={formats}
-            placeholder=" write something ..."
-          />
+          <div>
+          <RichTextWithTranslate/>
+          </div>  
           <h3 className=" font-semibold my-5">Featured Image</h3>
           <div className=" flex flex-col ">
             <div>
