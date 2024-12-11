@@ -5,7 +5,7 @@ import Article from "../models/Article.js";
 const router = express.Router();
 
 // Create a new article
-router.post("/articles", async (req, res) => {
+router.post("/", async (req, res) => {
   const { title, content, authorId, tags, references } = req.body;
 
   // Validate references format
@@ -46,7 +46,7 @@ router.post("/articles", async (req, res) => {
 });
 
 // Get all articles
-router.get("/articles", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const articles = await Article.find().populate(
       "authorId",
@@ -59,7 +59,7 @@ router.get("/articles", async (req, res) => {
 });
 
 // Get a specific article by ID
-router.get("/articles/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const article = await Article.findById(req.params.id).populate(
       "authorId",
@@ -75,7 +75,7 @@ router.get("/articles/:id", async (req, res) => {
 });
 
 // Get all articles by a specific user
-router.get("/articles/user/:userId", async (req, res) => {
+router.get("/user/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     const articles = await Article.find({ authorId: userId }).populate(
@@ -94,7 +94,7 @@ router.get("/articles/user/:userId", async (req, res) => {
 });
 
 // Update an article
-router.put("/articles/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { title, content, tags, references } = req.body;
   try {
     const updatedArticle = await Article.findByIdAndUpdate(
@@ -112,7 +112,7 @@ router.put("/articles/:id", async (req, res) => {
 });
 
 // Delete an article
-router.delete("/articles/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedArticle = await Article.findByIdAndDelete(req.params.id);
     if (!deletedArticle) {
@@ -125,7 +125,7 @@ router.delete("/articles/:id", async (req, res) => {
 });
 
 // Like an article
-router.post("/articles/:id/like", async (req, res) => {
+router.post("/:id/like", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);
@@ -150,7 +150,7 @@ router.post("/articles/:id/like", async (req, res) => {
 });
 
 // Dislike an article
-router.post("/articles/:id/dislike", async (req, res) => {
+router.post("/:id/dislike", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);
@@ -175,7 +175,7 @@ router.post("/articles/:id/dislike", async (req, res) => {
 });
 
 // Unlike an article
-router.post("/articles/:id/unlike", async (req, res) => {
+router.post("/:id/unlike", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);
@@ -200,7 +200,7 @@ router.post("/articles/:id/unlike", async (req, res) => {
 });
 
 // Undislike an article
-router.post("/articles/:id/undislike", async (req, res) => {
+router.post("/:id/undislike", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);

@@ -6,7 +6,7 @@ import Comment from "../models/Comment.js";
 const router = express.Router();
 
 // Create a reply to a comment
-router.post("/comments/:id/reply", async (req, res) => {
+router.post("/:id/reply", async (req, res) => {
   const { userId, content } = req.body; // Get userId and content from the request body
   try {
     const comment = await Comment.findById(req.params.id);
@@ -29,7 +29,7 @@ router.post("/comments/:id/reply", async (req, res) => {
 });
 
 // Get all replies for a specific comment
-router.get("/comments/:id/replies", async (req, res) => {
+router.get("/:id/replies", async (req, res) => {
   try {
     const replies = await Reply.find({ commentId: req.params.id }).populate(
       "userId",

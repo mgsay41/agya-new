@@ -5,7 +5,7 @@ import Report from "../models/Report.js";
 const router = express.Router();
 
 // Create a new report
-router.post("/report", async (req, res) => {
+router.post("/", async (req, res) => {
   const { userId, content, articleId, postId, commentId } = req.body;
 
   try {
@@ -40,7 +40,7 @@ router.post("/report", async (req, res) => {
 });
 
 // Get all reports
-router.get("/reports", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const reports = await Report.find();
     res.status(200).json(reports);
@@ -50,7 +50,7 @@ router.get("/reports", async (req, res) => {
 });
 
 // Get a specific report by ID
-router.get("/reports/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const report = await Report.findById(req.params.id);
     if (!report) {
@@ -63,7 +63,7 @@ router.get("/reports/:id", async (req, res) => {
 });
 
 // Delete a report
-router.delete("/reports/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await Report.findByIdAndDelete(req.params.id);
     res.status(204).json({ message: "Report deleted" });

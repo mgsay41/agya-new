@@ -58,16 +58,16 @@ connectDB();
 // API Routes
 app.use("/api/auth", authRouter); // Authentication routes
 app.use("/api/otp", otpRouter); // OTP routes
-app.use("/api", userRoutes); // User-related routes
-app.use("/api", postRoutes); // Post-related routes
-app.use("/api", commentRoutes); // Comment-related routes
-app.use("/api", replyRoutes); // Reply-related routes
-app.use("/api", articleRoutes); // Article-related routes
-app.use("/api", activityRoutes); // Activity-related routes
-app.use("/api", reportRoutes);
-app.use("/api", messageRoutes);
-app.use("/api", notificationRoutes);
-app.use("/api", TagsRoutes);
+app.use("/api/users", userRoutes); // User-related routes
+app.use("/api/posts", postRoutes); // Post-related routes
+app.use("/api/comments", commentRoutes); // Comment-related routes
+app.use("/api/replies", replyRoutes); // Reply-related routes
+app.use("/api/articles", articleRoutes); // Article-related routes
+app.use("/api/activities", activityRoutes); // Activity-related routes
+app.use("/api/reports", reportRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/tags", TagsRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
@@ -75,7 +75,7 @@ app.get("/", (req, res) => {
 });
 
 // Start the server
-const port = process.env.SERVER_PORT || 5000;
+const port = process.env.SERVER_PORT || 4000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

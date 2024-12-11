@@ -4,7 +4,7 @@ import Activity from "../models/Activity.js";
 
 const router = express.Router();
 // Create a new activity
-router.post("/activity", async (req, res) => {
+router.post("/", async (req, res) => {
   const {
     userId,
     activityName,
@@ -68,7 +68,7 @@ router.post("/activity", async (req, res) => {
 });
 
 // Get all activities
-router.get("/activities", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const activities = await Activity.find(); // Retrieve all activities
     res.status(200).json(activities); // Respond with the list of activities
@@ -78,7 +78,7 @@ router.get("/activities", async (req, res) => {
 });
 
 // Get a specific activity by ID
-router.get("/activities/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const activity = await Activity.findById(req.params.id);
     if (!activity) {
@@ -91,7 +91,7 @@ router.get("/activities/:id", async (req, res) => {
 });
 
 // Update an activity
-router.put("/activities/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updatedActivity = await Activity.findByIdAndUpdate(
       req.params.id,
@@ -105,7 +105,7 @@ router.put("/activities/:id", async (req, res) => {
 });
 
 // Delete an activity
-router.delete("/activities/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await Activity.findByIdAndDelete(req.params.id);
     res.status(204).json({ message: "Activity deleted" });

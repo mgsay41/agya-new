@@ -5,7 +5,7 @@ import User from "../models/User.js"; // Ensure the file extension is included f
 const router = express.Router();
 
 // Create a new user
-router.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
   const { email, password, firstname, lastname } = req.body;
   try {
     const newUser = new User({ email, password, firstname, lastname });
@@ -17,7 +17,7 @@ router.post("/users", async (req, res) => {
 });
 
 // Get all users
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
@@ -48,7 +48,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Update user
-router.put("/users/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -60,7 +60,7 @@ router.put("/users/:id", async (req, res) => {
 });
 
 // Delete user
-router.delete("/users/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.status(204).json({ message: "User deleted" });

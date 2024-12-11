@@ -5,7 +5,7 @@ import Message from "../models/message.js";
 const router = express.Router();
 
 // Send a new message
-router.post("/messages", async (req, res) => {
+router.post("/", async (req, res) => {
   const { userId, subject, message, senderName } = req.body;
 
   try {
@@ -24,7 +24,7 @@ router.post("/messages", async (req, res) => {
 });
 
 // Get all messages for a specific user
-router.get("/messages/:userId", async (req, res) => {
+router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -38,7 +38,7 @@ router.get("/messages/:userId", async (req, res) => {
 });
 
 // Get a specific message by ID
-router.get("/messages/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
@@ -51,7 +51,7 @@ router.get("/messages/:id", async (req, res) => {
 });
 
 // Mark a message as read
-router.patch("/messages/:id/read", async (req, res) => {
+router.patch("/:id/read", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -69,7 +69,7 @@ router.patch("/messages/:id/read", async (req, res) => {
 });
 
 // Delete a message
-router.delete("/messages/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {

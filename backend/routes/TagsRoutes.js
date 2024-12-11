@@ -4,7 +4,7 @@ import Tag from "../models/Tag.js";
 const router = express.Router();
 
 // Create a new tag
-router.post("/tags", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, description } = req.body;
 
   try {
@@ -22,7 +22,7 @@ router.post("/tags", async (req, res) => {
 });
 
 // Get all tags
-router.get("/tags", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const tags = await Tag.find();
     res.status(200).json(tags);
@@ -32,7 +32,7 @@ router.get("/tags", async (req, res) => {
 });
 
 // Get a tag by ID
-router.get("/tags/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const tag = await Tag.findById(req.params.id);
     if (!tag) {
@@ -45,7 +45,7 @@ router.get("/tags/:id", async (req, res) => {
 });
 
 // Update a tag
-router.put("/tags/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { name, description } = req.body;
 
   try {
@@ -64,7 +64,7 @@ router.put("/tags/:id", async (req, res) => {
 });
 
 // Delete a tag
-router.delete("/tags/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedTag = await Tag.findByIdAndDelete(req.params.id);
     if (!deletedTag) {

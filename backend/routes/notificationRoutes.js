@@ -5,7 +5,7 @@ import Notification from "../models/Notification.js";
 const router = express.Router();
 
 // Create a new notification
-router.post("/notifications", async (req, res) => {
+router.post("/", async (req, res) => {
   const { userId, content, category } = req.body;
 
   try {
@@ -22,7 +22,7 @@ router.post("/notifications", async (req, res) => {
 });
 
 // Get all notifications for a user
-router.get("/notifications/:userId", async (req, res) => {
+router.get("/:userId", async (req, res) => {
   try {
     const notifications = await Notification.find({
       userId: req.params.userId,
@@ -34,7 +34,7 @@ router.get("/notifications/:userId", async (req, res) => {
 });
 
 // Mark notification as read
-router.put("/notifications/:id/read", async (req, res) => {
+router.put("/:id/read", async (req, res) => {
   try {
     const updatedNotification = await Notification.findByIdAndUpdate(
       req.params.id,
@@ -51,7 +51,7 @@ router.put("/notifications/:id/read", async (req, res) => {
 });
 
 // Delete a notification
-router.delete("/notifications/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedNotification = await Notification.findByIdAndDelete(
       req.params.id

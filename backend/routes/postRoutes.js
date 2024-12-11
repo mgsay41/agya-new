@@ -5,7 +5,7 @@ import Post from "../models/Post.js";
 const router = express.Router();
 
 // Create a new post
-router.post("/posts", async (req, res) => {
+router.post("/", async (req, res) => {
   const { userId, content } = req.body;
   try {
     const newPost = new Post({ userId, content });
@@ -17,7 +17,7 @@ router.post("/posts", async (req, res) => {
 });
 
 // Get all posts
-router.get("/posts", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const posts = await Post.find();
     res.status(200).json(posts);
@@ -27,7 +27,7 @@ router.get("/posts", async (req, res) => {
 });
 
 // Get post by ID
-router.get("/posts/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
@@ -40,7 +40,7 @@ router.get("/posts/:id", async (req, res) => {
 });
 
 // Like a post
-router.post("/posts/:id/like", async (req, res) => {
+router.post("/:id/like", async (req, res) => {
   console.log("Received request to like post:", req.params.id); // Log post ID
   const { userId } = req.body;
   console.log("User ID received:", userId); // Log user ID
@@ -70,7 +70,7 @@ router.post("/posts/:id/like", async (req, res) => {
 });
 
 // Dislike a post
-router.post("/posts/:id/dislike", async (req, res) => {
+router.post("/:id/dislike", async (req, res) => {
   const { userId } = req.body; // Get userId from the request body
   try {
     const post = await Post.findById(req.params.id);
@@ -97,7 +97,7 @@ router.post("/posts/:id/dislike", async (req, res) => {
 });
 
 // Unlike a post
-router.post("/posts/:id/unlike", async (req, res) => {
+router.post("/:id/unlike", async (req, res) => {
   const { userId } = req.body; // Get userId from the request body
   try {
     const post = await Post.findById(req.params.id);
@@ -124,7 +124,7 @@ router.post("/posts/:id/unlike", async (req, res) => {
 });
 
 // Undislike a post
-router.post("/posts/:id/undislike", async (req, res) => {
+router.post("/:id/undislike", async (req, res) => {
   const { userId } = req.body; // Get userId from the request body
   try {
     const post = await Post.findById(req.params.id);
@@ -151,7 +151,7 @@ router.post("/posts/:id/undislike", async (req, res) => {
 });
 
 // Update post
-router.put("/posts/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -163,7 +163,7 @@ router.put("/posts/:id", async (req, res) => {
 });
 
 // Delete post
-router.delete("/posts/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     await Post.findByIdAndDelete(req.params.id);
     res.status(204).json({ message: "Post deleted" });
