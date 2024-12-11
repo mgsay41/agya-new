@@ -1,13 +1,14 @@
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Calendar } from "primereact/calendar";
 import { IoTrashBinOutline } from "react-icons/io5";
+import { GlobalContext } from "../context/GlobelContext";
 
 function AddActivity() {
-  const [age, setAge] = useState("");
+  const [activityName, setactivityName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState(null);
   const [images, setImages] = useState([]);
@@ -15,10 +16,18 @@ function AddActivity() {
   const [location, setLocation] = useState("offline");
   const [type, setType] = useState("Workshop");
   const [price, setPrice] = useState("Free");
+  const [organization, setOrganization] = useState("");
+  const [activityExLink, setActivityExLink] = useState("");
+  const [action, setAction] = useState("");
+  const [timeLine, setTimeLine] = useState("");
+ 
+  const [Description, setDescription] = useState("");
+  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  useEffect(() => {
+    setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
+  }, [setIsAuthUser]);
+
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -41,8 +50,52 @@ function AddActivity() {
     "image",
   ];
 
-  const [value, setValue] = useState("");
-  const [Description, setDescription] = useState("");
+
+
+  const createActivity = async () => {
+    
+    const activityData = {
+      userId: isAuthUser.id , // Replace with a valid userId
+      activityName: activityName ,
+      activityType: type,
+      date: date,
+      time: time,
+      featuredImage: "image.jpg",
+      organization: organization,
+      location: location,
+      price: price,
+      sponsors: imagesPreview,
+      description: Description,
+      timeline: timeLine,
+      activityExLink: activityExLink,
+      apply: action,
+      status: "pending",
+    };
+   console.log("hhhhhhhhhhhhhh"+activityData);
+    try {
+      const response = await fetch("http://localhost:4000/api/activity", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(activityData),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create activity");
+      }
+  
+      const result = await response.json();
+      console.log("Activity created successfully:", result);
+    } catch (error) {
+      console.error("Error creating activity:", error.message);
+    }
+  };
+  
+  // useEffect(() => {
+  //   console.log(timeLine);
+  // }, []);
 
   useEffect(() => {
     const files = Array.from(images);
@@ -94,6 +147,8 @@ function AddActivity() {
                   type="text"
                   className="w-[600px] outline-none border py-4 px-2 rounded-xl bg-white"
                   placeholder="Activity name - short activity name "
+                  value={activityName}
+                  onChange={(e) => setactivityName(e.target.value)}
                 />
                 <label className=" flex items-center my-4">
                   <p className=" bg-red-600 rounded-full w-2 h-2 mr-2"> </p>{" "}
@@ -145,6 +200,8 @@ function AddActivity() {
                   type="text"
                   className="w-[600px] outline-none border py-4 px-2 rounded-xl bg-white"
                   placeholder="Activity name - short activity name "
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
                 />
                 <label className=" flex items-center my-4 w-full">
                   <p className=" bg-red-600 rounded-full w-2 h-2 mr-2"> </p>{" "}
@@ -282,11 +339,6 @@ function AddActivity() {
                 </p>
               </div>
             </div>
-            <div className=" flex justify-center items-center">
-              <button className=" bg-main text-white py-2 px-[120px] rounded-xl mt-4">
-                Save
-              </button>
-            </div>
           </form>
         </div>
         <div className=" add-activity my-4">
@@ -320,8 +372,8 @@ function AddActivity() {
             </label>
             <ReactQuill
               theme="snow"
-              value={value}
-              onChange={setValue}
+              value={timeLine}
+              onChange={setTimeLine}
               className=" h-[200px]"
               modules={modules}
               formats={formats}
@@ -336,22 +388,28 @@ function AddActivity() {
               type="text"
               className="w-full outline-none border py-4 px-2 rounded-xl bg-white"
               placeholder="Activity name - short activity name "
+              value={activityExLink}
+              onChange={(e) => setActivityExLink(e.target.value)}
+              
             />
             <label className=" flex items-center my-4 w-full">
               <p className=" bg-red-600 rounded-full w-2 h-2 mr-2"> </p>Button
               Call to Action
             </label>
             <Select
-              value={age}
-              onChange={handleChange}
+              value={action}
+              onChange={(e)=> setAction(e.target.value)}
               displayEmpty
               className=" w-full"
             >
-              <MenuItem value="">offline</MenuItem>
-              <MenuItem value="">online</MenuItem>
+              <MenuItem value="Know More">Know More</MenuItem>
+              <MenuItem value="Apply">Apply</MenuItem>
+              <MenuItem value="Book">Book</MenuItem>
             </Select>
             <div className="flex justify-center items-center mt-4 mb-10 ">
-              <button className="bg-main text-white px-[100px] rounded-xl py-2">
+              <button className="bg-main text-white px-[100px] rounded-xl py-2"
+               onClick={() => createActivity()}
+              >
                 Submit Activity
               </button>
             </div>

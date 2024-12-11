@@ -15,8 +15,13 @@ import Activities from "./pages/Activites";
 import EditProfile from "./pages/EditProfile";
 import ArticleDetails from "./pages/ArticlesDetails";
 
+
+
 const App = () => {
   return (
+    // <div>
+    //   <Activities/>
+    // </div>
     <>
       <Routes>
         <Route path="/" element={<AboutLayout />}>
