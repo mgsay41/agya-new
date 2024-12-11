@@ -16,14 +16,16 @@ import {
   User,
 } from "lucide-react";
 
-const Sidebar = ({ user }) => {
-  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
+const Sidebar = () => {
 
+  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext)
+
+    
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
   }, [setIsAuthUser]);
 
-  const logout = async () => {
+  const logout = async (e) => {
     fetch("http://localhost:4000/api/auth/logout", {
       method: "POST",
       credentials: "include",
@@ -32,31 +34,23 @@ const Sidebar = ({ user }) => {
       setIsAuthUser(null);
     });
   };
-
-  const name = isAuthUser?.firstname;
+  const name = isAuthUser?.firstname
   let location = useLocation();
-
-  useEffect(() => {
-    console.log("User data in Sidebar:", user); // Debugging log
-  }, [user]);
-
   return (
     <div className="flex flex-col max-h-fit w-64 text-main-font rounded-lg border border-gray-300 bg-white shadow">
       {/* Profile Section */}
       <div className="flex flex-col items-center py-8">
         {/* Profile Image */}
         <img
-          src="./avatar.jpeg" // Use user's profile image or a default
+          src="https://via.placeholder.com/80" // Replace with the actual image URL
           alt="Profile"
           className="w-20 h-20 rounded-full mb-4"
         />
         {/* Name */}
-        <h2 className="text-lg font-semibold">
-          {user ? user.firstname : "Loading..."}
-        </h2>
+        <h2 className="text-lg font-semibold">{name}</h2>
         {/* Description */}
         <p className="text-sm text-gray-500 text-center px-4">
-          {user ? user.status || "No description available" : "Fetching user details..."}
+          Ui/Ux Designer | Cs Graduate | Archaeology Enthusiast
         </p>
       </div>
 
@@ -70,71 +64,61 @@ const Sidebar = ({ user }) => {
             <span className="w-12 inline-flex justify-end">
               <Home className={`w-5 h-5 ${location.pathname === "/" ? "text-main" : ""}`} />
             </span>
-            <span className={`ml-4 ${location.pathname === "/" ? "text-main" : ""}`}>
-              Home
-            </span>
+            <span className={`ml-4 ${location.pathname === "/" ? "text-main" : ""} `}>Home</span>
           </Link>
           <Link
             to="/about"
             className="flex items-center text-sm font-medium hover:text-main w-40"
           >
             <span className="w-12 inline-flex justify-end">
-              <Info className={`w-5 h-5 ${location.pathname === "/about" ? "text-main" : ""}`} />
+              <Info className={`w-5 h-5 ${location.pathname === "/about" ? "text-main" : ""}`}/>
             </span>
-            <span className={`ml-4 ${location.pathname === "/about" ? "text-main" : ""}`}>
-              About
-            </span>
+            <span className={`ml-4 ${location.pathname === "/about" ? "text-main" : ""} `}>About</span>
           </Link>
           <Link
             to="/activities"
             className="flex items-center text-sm font-medium hover:text-main w-40"
           >
             <span className="w-12 inline-flex justify-end">
-              <Calendar className={`w-5 h-5 ${location.pathname === "/activities" ? "text-main" : ""}`} />
+              <Calendar className={`w-5 h-5 ${location.pathname === "/activities" ? "text-main" : ""}`}/>
             </span>
-            <span className={`ml-4 ${location.pathname === "/activities" ? "text-main" : ""}`}>
-              Activities
-            </span>
+            <span className={`ml-4 ${location.pathname === "/activities" ? "text-main" : ""} `}>Activities</span>
           </Link>
           <Link
             to="/gallery"
             className="flex items-center text-sm font-medium hover:text-main w-40"
           >
             <span className="w-12 inline-flex justify-end">
-              <Image className={`w-5 h-5 ${location.pathname === "/gallery" ? "text-main" : ""}`} />
+              <Image className={`w-5 h-5 ${location.pathname === "/gallery" ? "text-main" : ""}`}/>
             </span>
-            <span className={`ml-4 ${location.pathname === "/gallery" ? "text-main" : ""}`}>
-              Gallery
-            </span>
+            <span className={`ml-4 ${location.pathname === "/gallery" ? "text-main" : ""} `}>Gallery</span>
           </Link>
           <Link
             to="/help"
             className="flex items-center text-sm font-medium hover:text-main w-40"
           >
             <span className="w-12 inline-flex justify-end">
-              <HelpCircle className={`w-5 h-5 ${location.pathname === "/help" ? "text-main" : ""}`} />
+              <HelpCircle className={`w-5 h-5 ${location.pathname === "/help" ? "text-main" : ""}`}/>
             </span>
-            <span className={`ml-4 ${location.pathname === "/help" ? "text-main" : ""}`}>
-              Help
-            </span>
+            <span className={`ml-4 ${location.pathname === "/help" ? "text-main" : ""} `}>Help</span>
           </Link>
+
           {/* Profile Button */}
           <Link
             to="/profile"
             className="flex items-center text-sm font-medium hover:text-main w-40"
           >
             <span className="w-12 inline-flex justify-end">
-              <User className={`w-5 h-5 ${location.pathname === "/profile" ? "text-main" : ""}`} />
+              <User className={`w-5 h-5 ${location.pathname === "/profile" ? "text-main" : ""}`}/>
             </span>
-            <span className={`ml-4 ${location.pathname === "/profile" ? "text-main" : ""}`}>
-              Profile
-            </span>
+            <span className={`ml-4 ${location.pathname === "/profile" ? "text-main" : ""} `}>Profile</span>
           </Link>
         </div>
 
         {/* Logout Button */}
         <div
-          className="flex items-center text-sm font-medium hover:text-main w-40 mx-auto mt-12 cursor-pointer"
+          
+          className="flex items-center text-sm font-medium hover:text-main w-40 mx-auto mt-12"
           onClick={logout}
         >
           <span className="w-12 inline-flex justify-end">

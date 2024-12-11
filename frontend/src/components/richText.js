@@ -24,14 +24,18 @@ const CustomToolbar = () => (
   </div>
 );
 
-const RichTextWithTranslate = () => {
+const RichTextWithTranslate = ({ onEditorChange }) => {
   const [editorValue, setEditorValue] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [originalText, setOriginalText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [targetLang, setTargetLang] = useState("en");
 
+
   // Memoize modules to prevent unnecessary re-renders
+
+
+
   const modules = useMemo(() => ({
     toolbar: {
       container: "#toolbar",
@@ -69,13 +73,20 @@ const RichTextWithTranslate = () => {
       });
   };
 
+  const handleEditorChange = (value) => {
+    setEditorValue(value);
+    if (onEditorChange) {
+      onEditorChange(value); // Pass the value to the parent
+    }
+  };
+
   return (
     <div className="p-4">
       <CustomToolbar />
       <ReactQuill
         theme="snow"
         value={editorValue}
-        onChange={setEditorValue}
+        onChange={handleEditorChange}
         modules={modules}
         placeholder="Write something amazing..."
         style={{ height: "300px", marginBottom: "20px" }}

@@ -10,22 +10,20 @@ router.post("/articles", async (req, res) => {
 
   // Validate references format
   if (references && !Array.isArray(references)) {
+    console.log("jjjjjj")
     return res
       .status(400)
       .json({ error: "References must be an array of objects" });
   }
 
   if (references) {
+    console.log(references)
     for (const reference of references) {
-      if (!reference.url) {
+      if (!reference) {
+        console.log("aaaaaaaaaaaa")
         return res
           .status(400)
           .json({ error: "Each reference must include a URL" });
-      }
-      if (!reference.title) {
-        return res
-          .status(400)
-          .json({ error: "Each reference must include a title" });
       }
     }
   }
@@ -40,8 +38,12 @@ router.post("/articles", async (req, res) => {
     });
     await newArticle.save();
     res.status(201).json(newArticle);
+    console.log("success")
   } catch (err) {
+    console.log("ppppppppppppppppppppp")
+    console.log(err.message)
     res.status(500).json({ error: err.message });
+    
   }
 });
 
