@@ -70,10 +70,10 @@ router.post("/activity", async (req, res) => {
 // Get all activities
 router.get("/activities", async (req, res) => {
   try {
-    const activities = await Activity.find();
-    res.status(200).json(activities);
+    const activities = await Activity.find(); // Retrieve all activities
+    res.status(200).json(activities); // Respond with the list of activities
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message }); // Handle errors
   }
 });
 

@@ -19,6 +19,7 @@ import activityRoutes from "./routes/activityRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import TagsRoutes from "./routes/TagsRoutes.js";
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use("/api", activityRoutes); // Activity-related routes
 app.use("/api", reportRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", TagsRoutes);
 
 // Root Route
 app.get("/", (req, res) => {

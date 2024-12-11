@@ -14,7 +14,7 @@ const activitySchema = new mongoose.Schema(
     featuredImage: { type: String },
     organization: { type: String },
     location: { type: String },
-    price: { type: Number },
+    price: { type: String },
     sponsors: [
       {
         name: { type: String },
