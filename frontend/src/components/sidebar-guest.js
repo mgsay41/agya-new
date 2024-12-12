@@ -463,7 +463,7 @@ const SidebarGuest = () => {
 
           {/* Login button */}
           <div
-            className="flex items-center justify-center text-sm font-medium w-32 mx-auto mt-12 bg-[#8B4513] text-white py-2 rounded-lg hover:bg-opacity-90"
+            className="flex items-center justify-center text-sm font-medium w-32 mx-auto mt-12 bg-main text-white py-2 rounded-lg hover:bg-opacity-90"
             onClick={() => setLoginPopup(true)}
           >
             Login
