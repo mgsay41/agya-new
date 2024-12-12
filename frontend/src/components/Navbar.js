@@ -13,6 +13,7 @@ import { GlobalContext } from "../context/GlobelContext";
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
+  const [error, setError] = useState(null);
   const [postText, setPostsext] = useState('');
   const [loading, setLoading] = useState(true);
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
