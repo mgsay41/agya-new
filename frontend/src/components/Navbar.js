@@ -1,4 +1,4 @@
-import React, { useState,useContext,useEffect } from "react";
+import React, { useState } from "react";
 import {
   Search,
   Plus,
@@ -8,51 +8,14 @@ import {
   Calendar,
   FilePlus,
 } from "lucide-react";
-import { GlobalContext } from "../context/GlobelContext";
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
-  const [error, setError] = useState(null);
-  const [postText, setPostsext] = useState('');
-  const [loading, setLoading] = useState(true);
-  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  useEffect(() => {
-    setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
-  }, [setIsAuthUser]);
-
-  const newPost = async () => {
-    try {
-      const postBody = {
-        userId: isAuthUser.id ,
-        content: postText,
-      }; // Replace with the data you want to send
-  
-      const response = await fetch(`http://localhost:4000/api/posts`, {
-        method: "POST", // Specify the HTTP method
-        headers: {
-          "Content-Type": "application/json", // Indicate the content type
-        },
-        body: JSON.stringify(postBody), // Convert the data to JSON format
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to create a new post");
-      }
-  
-      const data = await response.json();
-      console.log("Post created:", data);
-    } catch (err) {
-      setError(err.message || "An error occurred");
-      console.log(err.message);
-    } finally {
-      setLoading(false); // Set loading to false after the request completes
-    }
-  };
-  
 
   return (
     <>
@@ -67,16 +30,11 @@ const Navbar = () => {
                 X
               </div>
               <h3 className=" text-xl font-medium mt-10 text-center">New Post</h3>
-              <textarea className=" border border-black mt-4 resize-none w-[500px] h-32 "
-              value={postText}
-              onChange={(e) => setPostsext(e.target.value)}>
+              <textarea className=" border border-black mt-4 resize-none w-[500px] h-32 ">
+                {" "}
               </textarea>
               <div className=" flex justify-center items-center">
-                 <button className=" block  bg-main text-white py-2 px-10 my-4 rounded-xl "
-                onClick={() => newPost()}
-                 >
-                   Post
-                 </button>
+              <button className=" block  bg-main text-white py-2 px-10 my-4 rounded-xl ">Post</button>
               </div>
             </div>
           </div>
