@@ -1,4 +1,4 @@
-import React, { useState,useContext,useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Search,
   Plus,
@@ -8,18 +8,20 @@ import {
   Calendar,
   FilePlus,
 } from "lucide-react";
-import { GlobalContext } from "../context/GlobelContext";
+import { GlobalContext } from "../context/GlobalContext"; // Adjust import based on your structure
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [postOpen, setPostOpen] = useState(false);
-  const [postText, setPostsext] = useState('');
+  const [postText, setPostText] = useState('');
   const [loading, setLoading] = useState(true);
-  const [err,setError] =useState("");
+  const [err, setError] = useState("");
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
   }, [setIsAuthUser]);
@@ -27,62 +29,65 @@ const Navbar = () => {
   const newPost = async () => {
     try {
       const postBody = {
-        userId: isAuthUser.id ,
+        userId: isAuthUser.id,
         content: postText,
-        authorName:isAuthUser.firstname 
-      }; // Replace with the data you want to send
-  
+        authorName: isAuthUser.firstname,
+      };
+
       const response = await fetch(`http://localhost:4000/api/posts`, {
-        method: "POST", // Specify the HTTP method
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // Indicate the content type
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(postBody), // Convert the data to JSON format
+        body: JSON.stringify(postBody),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create a new post");
       }
-  
+
       const data = await response.json();
       console.log("Post created:", data);
     } catch (err) {
       setError(err.message || "An error occurred");
       console.log(err.message);
     } finally {
-      setLoading(false); // Set loading to false after the request completes
+      setLoading(false);
     }
   };
-  
 
   return (
     <>
-      {postOpen === true ? (
-        <div className=" z-[1000] absolute bg-black/40 w-[1340px] h-[110vh] left-0 -top-[4px]  ">
-          <div className=" bg-white flex flex-col py-4 px-4 justify-center top-[25%] absolute left-[30%] items-center">
-            <div className=" relative border-main border p-4">
+      {postOpen && (
+        <div className="z-[1000] absolute bg-black/40 w-[1340px] h-[110vh] left-0 -top-[4px]">
+          <div className="bg-white flex flex-col py-4 px-4 justify-center top-[25%] absolute left-[30%] items-center">
+            <div className="relative border-main border p-4">
               <div
                 onClick={() => setPostOpen(false)}
                 className="my-2 w-fit cursor-pointer text-right float-right bg-main rounded-full py-[4px] px-3 text-white"
               >
                 X
               </div>
-              <h3 className=" text-xl font-medium mt-10 text-center">New Post</h3>
-              <textarea className=" border border-black mt-4 resize-none w-[500px] h-32 "
-              value={postText}
-              onChange={(e) => setPostsext(e.target.value)}>
-              </textarea>
-              <div className=" flex justify-center items-center">
-                 <button className=" block  bg-main text-white py-2 px-10 my-4 rounded-xl "
-                onClick={() => newPost()}
-                 >
-                   Post
-                 </button>
+              <h3 className="text-xl font-medium mt-10 text-center">New Post</h3>
+              <textarea
+                className="border border-black mt-4 resize-none w-[500px] h-32"
+                value={postText}
+                onChange={(e) => setPostText(e.target.value)}
+              ></textarea>
+              <div className="flex justify-center items-center">
+                <button
+                  className="block bg-main text-white py-2 px-10 my-4 rounded-xl"
+                  onClick={newPost}
+                  disabled={loading}
+                >
+                  {loading ? "Posting..." : "Post"}
+                </button>
               </div>
+              {err && <p className="text-red-500">{err}</p>}
             </div>
           </div>
         </div>
-      ) : null}
+      )}
       <header className="w-full py-3">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
           {/* Logo */}
@@ -125,9 +130,7 @@ const Navbar = () => {
             {/* Dropdown Menu */}
             {isDropdownOpen && (
               <div className="absolute top-14 pb-4 right-0 w-48 bg-main text-white rounded-xl shadow-lg z-50">
-                {/* Arrow Pointer */}
                 <div className="absolute -top-2 right-24 w-4 h-4 bg-main transform rotate-45"></div>
-                {/* Dropdown Items */}
                 <div
                   className="flex items-center cursor-pointer gap-2 px-4 py-3 text-sm hover:bg-opacity-90"
                   onClick={() => setPostOpen(true)}
@@ -151,7 +154,6 @@ const Navbar = () => {
                   <Calendar className="w-5 h-5" />
                   <span>New Activity</span>
                 </a>
-                <hr className="border-t border-gray-300 w-11/12 mx-auto" />
               </div>
             )}
 

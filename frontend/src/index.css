@@ -13,7 +13,7 @@ body {
 }
 
 input::file-selector-button {
-  background-color: #31511e;
+  background-color: #005f6a;
   border: 0;
   color: white;
   padding: 8px 15px;
