@@ -40,6 +40,25 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Get posts by userId and populate user details
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const posts = await Post.find({ userId }).populate(
+      "userId", // Populate the userId field with user details
+      "firstname lastname image" // Include firstname, lastname, and image
+    );
+    if (posts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No posts found for this user" });
+    }
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Like a post
 router.post("/like/:id", async (req, res) => {
   const { userId } = req.body;

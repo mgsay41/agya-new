@@ -67,7 +67,7 @@ router.get("/:id", async (req, res) => {
   try {
     const article = await Article.findById(req.params.id).populate(
       "authorId",
-      "firstname lastname"
+      "firstname lastname image"
     );
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
@@ -84,7 +84,7 @@ router.get("/user/:userId", async (req, res) => {
     const userId = req.params.userId;
     const articles = await Article.find({ authorId: userId }).populate(
       "authorId",
-      "firstname lastname"
+      "firstname lastname image"
     );
     if (articles.length === 0) {
       return res

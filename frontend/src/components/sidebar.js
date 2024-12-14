@@ -3,6 +3,8 @@ import { Link } from "react-router-dom"; // Import Link for navigation
 import { useLocation } from 'react-router-dom';
 import { X } from "lucide-react";
 import { Toast } from "primereact/toast";
+import api from "../axios"; // Import your axios instance
+
 
 import { GlobalContext } from "../context/GlobelContext";
 
@@ -18,12 +20,42 @@ import {
 
 const Sidebar = () => {
 
-  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext)
+  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
+  const location = useLocation();
 
     
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
   }, [setIsAuthUser]);
+  const [userInfo, setUserInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      setUserInfo(user);
+
+      const fetchUserData = async () => {
+        try {
+          const userResponse = await api.get(`/users/${user.id}`);
+          setUserInfo(prevUserInfo => ({
+            ...prevUserInfo,
+            ...userResponse.data
+          }));
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchUserData();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
 
   const logout = async (e) => {
     fetch("http://localhost:4000/api/auth/logout", {
@@ -34,23 +66,28 @@ const Sidebar = () => {
       setIsAuthUser(null);
     });
   };
+
+  if (isLoading || !userInfo) {
+    return <div>Loading...</div>;
+  }
+
   const name = isAuthUser?.firstname
-  let location = useLocation();
+  
   return (
     <div className="flex flex-col max-h-fit w-64 text-main-font rounded-lg border border-gray-300 bg-white shadow">
       {/* Profile Section */}
       <div className="flex flex-col items-center py-8">
         {/* Profile Image */}
         <img
-          src="https://via.placeholder.com/80" // Replace with the actual image URL
-          alt="Profile"
+          src={userInfo.image || "/default.png"} // Replace with the actual image URL
+          alt={`${userInfo.firstname}'s profile`}
           className="w-20 h-20 rounded-full mb-4"
         />
         {/* Name */}
-        <h2 className="text-lg font-semibold">{name}</h2>
+        <h2 className="text-lg font-semibold">{userInfo.firstname} {userInfo.lastname}</h2>
         {/* Description */}
         <p className="text-sm text-gray-500 text-center px-4">
-          Ui/Ux Designer | Cs Graduate | Archaeology Enthusiast
+        {userInfo.affiliation} | {userInfo.academic_title}
         </p>
       </div>
 

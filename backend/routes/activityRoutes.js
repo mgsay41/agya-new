@@ -67,13 +67,18 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all activities
+// Get activities filtered by userId
 router.get("/", async (req, res) => {
   try {
-    const activities = await Activity.find(); // Retrieve all activities
-    res.status(200).json(activities); // Respond with the list of activities
+    const { userId } = req.query;
+    
+    // If userId is provided, filter activities
+    const filter = userId ? { userId: new mongoose.Types.ObjectId(userId) } : {};
+    
+    const activities = await Activity.find(filter);
+    res.status(200).json(activities);
   } catch (err) {
-    res.status(500).json({ error: err.message }); // Handle errors
+    res.status(500).json({ error: err.message });
   }
 });
 
