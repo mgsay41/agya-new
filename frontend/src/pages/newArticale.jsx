@@ -6,7 +6,9 @@ import { FaFile } from "react-icons/fa";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import Navbar from "../components/Navbar";
+
 import { GlobalContext } from "../context/GlobelContext"; // Assuming this import is needed
+
 
 export default function NewArtical() {
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);

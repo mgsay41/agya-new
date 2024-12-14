@@ -1,4 +1,4 @@
-import{React,useState} from "react";
+import{React,useState,useEffect,useContext} from "react";
 import {
   MoreVertical,
   MessageCircle,
@@ -8,12 +8,22 @@ import {
 } from "lucide-react";
 import SharePostModal from "./SharePostModal";
 import DOMPurify from "dompurify";
+import CommentPopup from "./commentsPopUp.js";
+import { GlobalContext } from "../context/GlobelContext.js"; 
 
 
 
 
 const SocialCard = ({onClick,item}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCommentPopupOpen, setCommentPopupOpen] = useState(false);
+  const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
+  const [likes, setLikes] = useState();
+  const [dislikes, setDislikes] = useState();
+
+useEffect(() => {
+      setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
+    }, [setIsAuthUser]);
 
 
   function formatDate(isoDateString) {
@@ -45,7 +55,7 @@ const SocialCard = ({onClick,item}) => {
     return `${dayIndicator} • ${formattedTime}`;
   }
   
-  
+
   const handleShareClick = () => {
     setIsModalOpen(true);
   };
@@ -53,6 +63,59 @@ const SocialCard = ({onClick,item}) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleDisLike = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/articles/dislike/${item._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: isAuthUser.id, // Pass the user's ID
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to dislike article');
+      }
+  
+      // Assuming the response contains the updated data
+      const data = await response.json();
+      console.log(data.message);
+      setDislikes(data.article.dislikes)
+      setLikes(data.article.likes)
+      // Optionally, update state or UI based on the updated data
+    } catch (error) {
+      console.error("Error handling dislike:", error);
+    }
+  };
+  
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/articles/like/${item._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },  
+        body: JSON.stringify({
+          userId: isAuthUser.id, // Pass the user's ID
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to like article');
+      }
+  
+      const data = await response.json();
+      console.log(data.message);
+      setDislikes(data.article.dislikes)
+      setLikes(data.article.likes)
+    } catch (error) {
+      console.error("Error handling like:", error);
+    }
+  };
+
   const sanitizedContent = DOMPurify.sanitize(item.title);
   return (
     <div  className="max-w-xl w-full rounded-3xl overflow-hidden shadow-md bg-SoftMain border border-main/50">
@@ -91,12 +154,17 @@ const SocialCard = ({onClick,item}) => {
       <div className="px-4 py-2 flex items-center bg-SoftMain border-t border-main/50">
         <div className="flex items-center space-x-3">
           <div className="flex rounded-full border border-gray-200 divide-x bg-[#e0d1cc]">
-            <button className="flex items-center space-x-1 px-3 py-1">
+            <button className="flex items-center space-x-1 px-3 py-1"
+            onClick={()=>handleLike()}
+            >
               <ArrowBigUp className="w-5 h-5 text-main" />
-              <span className="text-sm text-main">Upvote</span>
+              <span className="text-sm text-main">Upvote {likes}</span>
             </button>
-            <button className="px-3 py-1 hover:bg-[#d4c5c0] rounded-r-full">
+            <button className="px-3 py-1 hover:bg-[#d4c5c0] rounded-r-full"
+            onClick={()=>handleDisLike()}
+            >
               <ArrowBigDown className="w-5 h-5 text-main" />
+              <span className="text-sm text-main">Downvote {dislikes}</span>
             </button>
           </div>
 
@@ -107,9 +175,16 @@ const SocialCard = ({onClick,item}) => {
             <Share2 className="h-5 w-5 text-main" />
           </button>
 
-          <button className="p-2 hover:bg-gray-50 rounded-full">
+          <button className="p-2 hover:bg-gray-50 rounded-full"
+          onClick={() => setCommentPopupOpen(true)}
+          >
             <MessageCircle className="h-5 w-5 text-main" />
           </button>
+          <CommentPopup
+        isOpen={isCommentPopupOpen}
+        articleID={item._id}
+        onClose={() => setCommentPopupOpen(false)}
+      />
         </div>
 
         <div className="ml-auto">

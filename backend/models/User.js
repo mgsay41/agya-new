@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: "/default.png", // Default value if no image is provided
+      default: "/avatar.jpeg", // Default value if no image is provided
     },
     affiliation: {
       type: String,

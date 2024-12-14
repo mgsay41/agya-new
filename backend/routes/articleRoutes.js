@@ -129,32 +129,46 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Like an article
-router.post("/:id/like", async (req, res) => {
+// Like an article
+router.post("/like/:id", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
     }
-
-    if (article.likedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have already liked this article" });
+     console.log(article)
+    // Remove the user from dislikedBy if they are there
+    if (article.dislikedBy.includes(userId)) {
+      article.dislikedBy = article.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      article.dislikes -= 1;
     }
 
-    article.likedBy.push(userId);
-    article.likes += 1;
+    // If the user has already liked the article, remove the like
+    if (article.likedBy.includes(userId)) {
+      article.likedBy = article.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      article.likes -= 1;
+    } else {
+      // Otherwise, add the like
+      article.likedBy.push(userId);
+      article.likes += 1;
+    }
+
     await article.save();
 
-    res.status(200).json({ message: "Article liked", article });
+    res.status(200).json({ message: "Article liked/unliked", article });
   } catch (err) {
+    console.log(err.message)
     res.status(500).json({ error: err.message });
   }
 });
 
 // Dislike an article
-router.post("/:id/dislike", async (req, res) => {
+router.post("/dislike/:id", async (req, res) => {
   const { userId } = req.body;
   try {
     const article = await Article.findById(req.params.id);
@@ -162,72 +176,34 @@ router.post("/:id/dislike", async (req, res) => {
       return res.status(404).json({ message: "Article not found" });
     }
 
+    // Remove the user from likedBy if they are there
+    if (article.likedBy.includes(userId)) {
+      article.likedBy = article.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      article.likes -= 1;
+    }
+
+    // If the user has already disliked the article, remove the dislike
     if (article.dislikedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have already disliked this article" });
+      article.dislikedBy = article.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      article.dislikes -= 1;
+    } else {
+      // Otherwise, add the dislike
+      article.dislikedBy.push(userId);
+      article.dislikes += 1;
     }
 
-    article.dislikedBy.push(userId);
-    article.dislikes += 1;
     await article.save();
 
-    res.status(200).json({ message: "Article disliked", article });
+    res.status(200).json({ message: "Article disliked/undisliked", article });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Unlike an article
-router.post("/:id/unlike", async (req, res) => {
-  const { userId } = req.body;
-  try {
-    const article = await Article.findById(req.params.id);
-    if (!article) {
-      return res.status(404).json({ message: "Article not found" });
-    }
 
-    if (!article.likedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have not liked this article yet" });
-    }
-
-    article.likedBy = article.likedBy.filter((id) => id.toString() !== userId);
-    article.likes -= 1;
-    await article.save();
-
-    res.status(200).json({ message: "Article unliked", article });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Undislike an article
-router.post("/:id/undislike", async (req, res) => {
-  const { userId } = req.body;
-  try {
-    const article = await Article.findById(req.params.id);
-    if (!article) {
-      return res.status(404).json({ message: "Article not found" });
-    }
-
-    if (!article.dislikedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have not disliked this article yet" });
-    }
-
-    article.dislikedBy = article.dislikedBy.filter(
-      (id) => id.toString() !== userId
-    );
-    article.dislikes -= 1;
-    await article.save();
-
-    res.status(200).json({ message: "Article undisliked", article });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 export default router;
