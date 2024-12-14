@@ -14,7 +14,34 @@ import DOMPurify from "dompurify";
 const PostCard = ({onClick,item}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  function formatDate(isoDateString) {
+    const date = new Date(isoDateString);
+    const now = new Date();
+    
+    // Calculate time difference in days
+    const timeDiff = now - date;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    
+    // Format time
+    const formattedTime = date.toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
   
+    // Determine day indicator
+    let dayIndicator;
+    if (daysDiff === 0) {
+      dayIndicator = 'Today';
+    } else if (daysDiff === 1) {
+      dayIndicator = '1d';
+    } else {
+      dayIndicator = `${daysDiff}d`;
+    }
+  
+    // Combine day and time
+    return `${dayIndicator} • ${formattedTime}`;
+  }
   
   const handleShareClick = () => {
     setIsModalOpen(true);
@@ -31,15 +58,15 @@ const PostCard = ({onClick,item}) => {
         <div className="flex items-center flex-1">
           <div className="h-12 w-12 mr-3 rounded-full overflow-hidden">
             <img
-              src="/avatar.jpeg"
+              src={item.userId?.image}
               alt="User avatar"
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="font-medium text-base">{item.authorName}</span>
+          <span className="font-medium text-base">{item.userId?.firstname} {item.userId?.lastname}</span>
         </div>
         <div className="flex items-center">
-          <span className="text-xs text-gray-500 mr-4">{item.createdAt}</span>
+          <span className="text-xs text-gray-500 mr-4">{formatDate(item.createdAt)}</span>
         </div>
       </div>
 

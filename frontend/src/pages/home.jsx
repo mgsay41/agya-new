@@ -81,7 +81,7 @@ function Home() {
             <SocialCard
               key={index}
               item={item}
-              onClick={() => navigate(`/article/${item.name}`)} // Navigate dynamically
+              onClick={() => navigate(`/article/${item._id}`)} // Navigate dynamically
             />
           )
         ))}

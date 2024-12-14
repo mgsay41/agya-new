@@ -20,15 +20,15 @@ const ActivityCard = ({ title, date, location, price, applicants, image }) => (
         <span>{date}</span>
       </div>
       <div className="flex items-center text-sm text-gray-500 space-x-2 mb-2">
-        <GrLanguage className="w-4 h-4 text-green-600 size-20" />
+        <GrLanguage className="w-4 h-4 text-main size-20" />
         <span>{location}</span>
       </div>
       <div className="flex items-center text-sm text-gray-500 space-x-2 mb-2">
-        <HiOutlineTicket className="w-4 h-4 text-green-600" />
+        <HiOutlineTicket className="w-4 h-4 text-main" />
         <span>{price}</span>
       </div>
       <div className="flex items-center text-sm text-gray-500 space-x-2">
-        <MdOutlinePersonOutline className="w-4 h-4 text-green-600" />
+        <MdOutlinePersonOutline className="w-4 h-4 text-main" />
         <span>{applicants} Applied</span>
       </div>
     </div>

@@ -44,6 +44,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.post('/bulk-fetch', async (req, res) => {
+  try {
+    const { tagIds } = req.body;
+
+    if (!Array.isArray(tagIds) || tagIds.length === 0) {
+      return res.status(400).json({ error: 'Invalid tag IDs.' });
+    }
+
+    // Find tags by IDs
+    const tags = await Tag.find({ _id: { $in: tagIds } });
+
+    res.json(tags); // Return the tags
+  } catch (error) {
+    console.error('Error fetching tags:', error);
+    res.status(500).json({ error: 'Failed to fetch tags.' });
+  }
+});
+
 // Update a tag
 router.put("/:id", async (req, res) => {
   const { name, description } = req.body;

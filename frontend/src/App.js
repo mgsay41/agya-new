@@ -30,11 +30,14 @@ const App = () => {
         </Route>
         <Route path="/edit-profile" element={<EditProfile/>}/>
         <Route path="/new-article" element={<NewArtical/>}/>
-        <Route path="/article/:name" element={<ArticleDetails/>}/>
+        <Route path="/article" element={<ActivityDetailsLayout/>}>
+          <Route path="/article/new-article" element={<AddActivity/>} />
+          <Route path="/article/:id" element={<ArticleDetails/>}/>
+        </Route>
         <Route path="/activity" element={<ActivityDetailsLayout/>}>
           <Route path="/activity/new-activity" element={<AddActivity/>} />
           <Route path="/activity/edit-activity" element={<EditActivity/>} />
-          <Route path="/activity/:name" element={<ActivityDetails/>}/>
+          <Route path="/activity/:id" element={<ActivityDetails/>}/>
         </Route>
          <Route path="*" element={<Navigate to={"/"}/>}/>
       </Routes>
