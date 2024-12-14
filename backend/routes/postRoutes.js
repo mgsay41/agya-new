@@ -41,111 +41,75 @@ router.get("/:id", async (req, res) => {
 });
 
 // Like a post
-router.post("/:id/like", async (req, res) => {
-  console.log("Received request to like post:", req.params.id); // Log post ID
+router.post("/like/:id", async (req, res) => {
   const { userId } = req.body;
-  console.log("User ID received:", userId); // Log user ID
-
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "post not found" });
     }
 
-    // Check if the user has already liked the post
-    if (post.likedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have already liked this post" });
-    }
-
-    // Add userId to likedBy and increment likes count
-    post.likedBy.push(userId);
-    post.likes += 1;
-    await post.save();
-
-    res.status(200).json({ message: "Post liked", post });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Dislike a post
-router.post("/:id/dislike", async (req, res) => {
-  const { userId } = req.body; // Get userId from the request body
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    // Check if the user has already disliked the post
+    // Remove the user from dislikedBy if they are there
     if (post.dislikedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have already disliked this post" });
+      post.dislikedBy = post.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      post.dislikes -= 1;
     }
 
-    // Add userId to dislikedBy and increment dislikes count
-    post.dislikedBy.push(userId);
-    post.dislikes += 1;
+    // If the user has already liked the article, remove the like
+    if (post.likedBy.includes(userId)) {
+      post.likedBy = post.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      post.likes -= 1;
+    } else {
+      // Otherwise, add the like
+      post.likedBy.push(userId);
+      post.likes += 1;
+    }
+
     await post.save();
 
-    res.status(200).json({ message: "Post disliked", post });
+    res.status(200).json({ message: "post liked/unliked", post });
   } catch (err) {
+    
     res.status(500).json({ error: err.message });
   }
 });
 
-// Unlike a post
-router.post("/:id/unlike", async (req, res) => {
-  const { userId } = req.body; // Get userId from the request body
+// Dislike an article
+router.post("/dislike/:id", async (req, res) => {
+  const { userId } = req.body;
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "post not found" });
     }
 
-    // Check if the user has liked the post
-    if (!post.likedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have not liked this post yet" });
+    // Remove the user from likedBy if they are there
+    if (post.likedBy.includes(userId)) {
+      post.likedBy = post.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      post.likes -= 1;
     }
 
-    // Remove userId from likedBy and decrement likes count
-    post.likedBy = post.likedBy.filter((id) => id.toString() !== userId);
-    post.likes -= 1;
+    // If the user has already disliked the article, remove the dislike
+    if (post.dislikedBy.includes(userId)) {
+      post.dislikedBy = post.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      post.dislikes -= 1;
+    } else {
+      // Otherwise, add the dislike
+      post.dislikedBy.push(userId);
+      post.dislikes += 1;
+    }
+
     await post.save();
 
-    res.status(200).json({ message: "Post unliked", post });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Undislike a post
-router.post("/:id/undislike", async (req, res) => {
-  const { userId } = req.body; // Get userId from the request body
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-
-    // Check if the user has disliked the post
-    if (!post.dislikedBy.includes(userId)) {
-      return res
-        .status(400)
-        .json({ message: "You have not disliked this post yet" });
-    }
-
-    // Remove userId from dislikedBy and decrement dislikes count
-    post.dislikedBy = post.dislikedBy.filter((id) => id.toString() !== userId);
-    post.dislikes -= 1;
-    await post.save();
-
-    res.status(200).json({ message: "Post undisliked", post });
+    res.status(200).json({ message: "Article disliked/undisliked", post });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

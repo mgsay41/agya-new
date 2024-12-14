@@ -8,7 +8,7 @@ import {
   Calendar,
   FilePlus,
 } from "lucide-react";
-import { GlobalContext } from "../context/GlobalContext"; // Adjust import based on your structure
+import { GlobalContext } from "../context/GlobelContext.js"; // Adjust import based on your structure
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
