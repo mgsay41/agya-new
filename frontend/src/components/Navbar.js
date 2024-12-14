@@ -15,6 +15,7 @@ const Navbar = () => {
   const [postOpen, setPostOpen] = useState(false);
   const [postText, setPostsext] = useState('');
   const [loading, setLoading] = useState(true);
+  const [err,setError] =useState("");
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -28,6 +29,7 @@ const Navbar = () => {
       const postBody = {
         userId: isAuthUser.id ,
         content: postText,
+        authorName:isAuthUser.firstname 
       }; // Replace with the data you want to send
   
       const response = await fetch(`http://localhost:4000/api/posts`, {

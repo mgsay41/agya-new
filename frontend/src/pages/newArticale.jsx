@@ -12,14 +12,16 @@ export default function NewArtical() {
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
   const [title, setTitle] = useState("bbbbbbbbb");
   const [content, setContent] = useState("");
-  const [tags, setTage] = useState([]);    // tags not define in schema
+  const [tags, setTags] = useState([]);    // tags not define in schema
+  const [adminTags,setAdminTags] = useState([]);
   const [references, setReferences] = useState([]);
   const [image, setImages] = useState(""); // feature image not exist in the article model
   const [editorValue, setEditorValue] = useState("");
   const [newReference, setNewReference] = useState(""); // State to hold the new reference text
-
+  const [searchText, setSearchText] = useState("");
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
+    fetchTags();
   }, [setIsAuthUser]);
 
   useEffect(() => {
@@ -51,6 +53,19 @@ export default function NewArtical() {
     const updatedReferences = references.filter((_, i) => i !== index);
     setReferences(updatedReferences);
   };
+  const handleAddTag = (tag) => {
+    if (!tags.includes(tag)) {
+      setTags((prevTags) => [...prevTags, tag]);
+    }
+  };
+
+  const handleRemoveTag = (tag) => {
+    setTags((prevTags) => prevTags.filter((t) => t !== tag));
+  };
+
+  const filteredAdminTags = adminTags.filter((tag) =>
+    tag.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   async function createArticle() {
     try {
@@ -60,6 +75,7 @@ export default function NewArtical() {
         authorId: isAuthUser.id, // Example MongoDB ObjectId
         tags: tags,
         references: references,
+        authorName: isAuthUser.firstname
       };
 
       const response = await fetch("http://localhost:4000/api/articles", {
@@ -79,6 +95,28 @@ export default function NewArtical() {
       console.log("Article created successfully:", newArticle);
     } catch (error) {
       console.error("Error creating article:", error.message);
+    }
+  }
+  async function fetchTags() {
+    try {
+      const response = await fetch("http://localhost:4000/api/tags", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to fetch tags");
+      }
+  
+      const tags = await response.json();
+      setAdminTags(tags);
+      console.log("Fetched tags successfully:", tags);
+      return tags;
+    } catch (error) {
+      console.error("Error fetching tags:", error.message);
     }
   }
 
@@ -102,19 +140,39 @@ export default function NewArtical() {
             </div>
           </div>
           <div className="tages">
-            <h3 className="font-semibold my-5">Article Tags</h3>
-            <div className="flex h-[10px] items-center relative mb-[10px]">
+             <h3 className="font-semibold my-5">Article Tags</h3>
+             <div className="flex h-[10px] items-center relative mb-[10px]">
               <CiSearch className="absolute top-[-9px] left-1 w-[25px]" />
               <input
                 type="text"
                 className="bg-[#e6e6d7] border-0 w-1/2 px-[40px] h-[30px] mb-[10px] rounded-[5px]"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)} // Update search text
+                placeholder="Search tags"
               />
             </div>
+            {/* Selected Tags */}
             <div className="flex gap-[10px]">
-              <div className="border border-solid py-[6px] px-[10px] border-main mt-[10px] rounded-[5px]">tag1</div>
-              <div className="border border-solid py-[6px] px-[10px] border-main mt-[10px] rounded-[5px]">tag1</div>
-              <div className="border border-solid py-[6px] px-[10px] border-main mt-[10px] rounded-[5px]">tag1</div>
-              <div className="border border-solid py-[6px] px-[10px] border-main mt-[10px] rounded-[5px]">tag1</div>
+              {tags.map((tag) => (
+                <div
+                  key={tag._id}
+                  className="border border-solid py-[6px] px-[10px] border-main mt-[10px] rounded-[5px] cursor-pointer bg-main text-white"
+                  onClick={() => handleRemoveTag(tag)}
+                >
+                  {tag.name}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-[10px] mt-[10px]">
+              {filteredAdminTags.map((tag) => (
+                <div
+                  key={tag._id}
+                  className="border border-solid py-[6px] px-[10px] border-main rounded-[5px] cursor-pointer"
+                  onClick={() => handleAddTag(tag)}
+                >
+                  {tag.name}
+                </div>
+              ))}
             </div>
             <div>
               <h3 className="font-semibold my-5">Article References</h3>
