@@ -20,7 +20,7 @@ import reportRoutes from "./routes/reportRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import TagsRoutes from "./routes/TagsRoutes.js";
-
+import FeaturedRoutes from "./routes/featuredArticleRoute.js";
 const app = express();
 
 // Middleware
@@ -68,6 +68,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tags", TagsRoutes);
+app.use("/api/FeaturedArticles", FeaturedRoutes);
 
 // Root Route
 app.get("/", (req, res) => {

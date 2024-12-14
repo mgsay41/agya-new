@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const ArticleSchema = new mongoose.Schema({
   title: { type: String},
+  authorName:{type: String ,required: true },
   content: { type: String},
   authorId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -15,6 +16,9 @@ const ArticleSchema = new mongoose.Schema({
   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdAt: { type: Date, default: Date.now },
+  image:{ type: String},
+  type: { type: String, default: "article" }
+
 });
 
 const Article = mongoose.model("Article", ArticleSchema);

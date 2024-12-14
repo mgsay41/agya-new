@@ -6,12 +6,13 @@ const router = express.Router();
 
 // Create a new post
 router.post("/", async (req, res) => {
-  const { userId, content } = req.body;
+  const { userId, content ,authorName } = req.body;
   try {
-    const newPost = new Post({ userId, content });
+    const newPost = new Post({ userId, content , authorName });
     await newPost.save();
     res.status(201).json(newPost);
   } catch (err) {
+    console.log(err.message);
     res.status(500).json({ error: err.message });
   }
 });

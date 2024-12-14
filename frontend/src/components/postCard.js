@@ -9,7 +9,9 @@ import {
 import SharePostModal from "./SharePostModal";
 import DOMPurify from "dompurify";
 
-const SocialCard = ({onClick,item}) => {
+
+
+const PostCard = ({onClick,item}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   
@@ -21,7 +23,7 @@ const SocialCard = ({onClick,item}) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  const sanitizedContent = DOMPurify.sanitize(item.title);
+  const sanitizedContent = DOMPurify.sanitize(item.content);
   return (
     <div  className="max-w-xl w-full rounded-3xl overflow-hidden shadow-md bg-SoftMain border border-main/50">
       {/* Header */}
@@ -47,12 +49,6 @@ const SocialCard = ({onClick,item}) => {
            className="content-container"
             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         ></div>
-        <div className="relative w-full rounded-lg overflow-hidden mb-2">
-          <img
-            src={item.image}
-            className="w-full h-full object-cover"
-          />
-        </div>
       </div>
 
       {/* Footer */}
@@ -93,4 +89,4 @@ const SocialCard = ({onClick,item}) => {
   );
 };
 
-export default SocialCard;
+export default PostCard;
