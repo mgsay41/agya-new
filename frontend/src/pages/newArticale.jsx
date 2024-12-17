@@ -6,49 +6,31 @@ import { FaFile } from "react-icons/fa";
 import { IoTrashBinOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import Navbar from "../components/Navbar";
+import RichTextWithTranslate from "../components/richText";
+import ImageUploadPopup from "../components/ImageUploadPopup";
 
 import { GlobalContext } from "../context/GlobelContext"; // Assuming this import is needed
 
 
 export default function NewArtical() {
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
-  const [title, setTitle] = useState("bbbbbbbbb");
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
   const [adminTags, setAdminTags] = useState([]);
   const [references, setReferences] = useState([]);
-  const [image, setImages] = useState("");
-  const [editorValue, setEditorValue] = useState("");
+  const [image, setImage] = useState("");
   const [newReference, setNewReference] = useState("");
   const [searchText, setSearchText] = useState("");
-
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchTags();
   }, [setIsAuthUser]);
 
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image", "video"],
-    ],
+  const handleImageUpload = (file) => {
+    setImage(file);
   };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-  ];
-
   const handleAddTag = (tag) => {
     if (!tags.includes(tag)) {
       setTags((prevTags) => [...prevTags, tag]);
@@ -67,11 +49,12 @@ export default function NewArtical() {
     try {
       const articleData = {
         title: title,
-        content: editorValue,
+        content: content,
         authorId: isAuthUser.id,
         tags: tags,
         references: references,
-        authorName: isAuthUser.firstname
+        authorName: isAuthUser.firstname,
+        image:image,
       };
 
       const response = await fetch("http://localhost:4000/api/articles", {
@@ -122,34 +105,39 @@ export default function NewArtical() {
       <Navbar/>
       <form className="articale">
         <div className="mt-8">
-          <ReactQuill
-            theme="snow"
-            value={editorValue}
-            onChange={setEditorValue}
-            modules={modules}
-            formats={formats}
-            placeholder=" write something ..."
-          />
+          <RichTextWithTranslate/>
           <h3 className="font-semibold my-5">Featured Image</h3>
           <div className="flex flex-col">
-            <div>
+          <div>
               <input
                 type="radio"
-                className="accent-main w-[15px] h-[15px]"
-                id=""
+                className="accent-main w-[15px] h-[15px] mr-2"
+                id="use-first-image"
                 name="feat-input"
+                onClick={() => setImage()}
               />
-              <label htmlFor=""> Use first image as featured image</label>
+              <label htmlFor="use-first-image">
+                Use first image as featured image
+              </label>
             </div>
             <div>
               <input
                 type="radio"
-                className="accent-main w-[15px] h-[15px]"
+                className="accent-main w-[15px] h-[15px] mr-2"
+                id="upload-new-image"
                 name="feat-input"
+                onClick={() => setShowUploadPopup(true)}
               />
-              <label htmlFor=""> Upload another image</label>
+              <label htmlFor="upload-new-image">Upload another image</label>
             </div>
           </div>
+          {showUploadPopup && (
+            <ImageUploadPopup
+              onClose={() => setShowUploadPopup(false)}
+              onImageUpload={handleImageUpload}
+            />
+          )}
+          
           <div className="tages">
             <h3 className="font-semibold my-5">Article Tags</h3>
             <div className="flex h-[10px] items-center relative mb-[10px]">

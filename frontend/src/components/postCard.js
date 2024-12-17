@@ -194,7 +194,7 @@ const PostCard = ({onClick,item}) => {
       </div>
 
       {/* SharePostModal */}
-      {isModalOpen && <SharePostModal onClose={handleCloseModal} />}
+      {isModalOpen && <SharePostModal item={item} onClose={handleCloseModal} />}
     </div>
   );
 };

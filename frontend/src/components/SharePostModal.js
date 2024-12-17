@@ -1,11 +1,18 @@
 import React from "react";
 import { X, Clipboard } from "lucide-react"; // Ensure lucide-react is installed: npm install lucide-react
 
-const SharePostModal = ({ onClose }) => {
+const SharePostModal = ({ onClose, item }) => {
   const handleCopyLink = () => {
-    const link = "https://www.climate_heritage.com/pin/9148005520137503/";
-    navigator.clipboard.writeText(link);
-    alert("Link copied to clipboard!");
+    if (item.type = "post") {
+      const link = "http://localhost:3000";
+      navigator.clipboard.writeText(link);
+      alert("Link copied to clipboard!");
+    }
+    else {
+      const link = `http://http://localhost:3000/article/${item._id}`;
+      navigator.clipboard.writeText(link);
+      alert("Link copied to clipboard!");
+    }
   };
 
   return (
@@ -54,7 +61,11 @@ const SharePostModal = ({ onClose }) => {
         <div className="flex items-center gap-2 rounded-lg border border-gray-300">
           <input
             type="text"
-            value="https://www.climate_heritage.com/pin/9148005520137503/"
+            value={
+              item.type === "post"
+                ? "http://localhost:3000"
+                : `http://localhost:3000/article/${item._id}`
+            }
             readOnly
             className="flex-1 px-2 py-1 bg-transparent text-sm text-center text-gray-700 focus:outline-none"
           />
