@@ -21,8 +21,34 @@ import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import TagsRoutes from "./routes/TagsRoutes.js";
 import FeaturedRoutes from "./routes/featuredArticleRoute.js";
+import cron from "node-cron";
+import Article from "./models/Article.js";
+import TopArticle from "./models/featuredArticles.js";
 const app = express();
+cron.schedule("0 0 * * *", async () => {
+  try {
+    // Find the article with the highest likes
+    const topArticle = await TopArticle.findOne().sort({ likes: -1 }).limit(1);
 
+    if (topArticle) {
+      console.log("Top Article of the Day:", topArticle);
+
+      // Create a new FeaturedArticle with just the articleID
+      const featured = new FeaturedArticle({
+        articleID: topArticle._id,
+      });
+
+      // Optional: Delete previous featured articles
+      await TopArticle.deleteMany({});
+
+      // Save the new featured article
+      await featured.save();
+      console.log("Top article saved as Featured Article!");
+    }
+  } catch (error) {
+    console.error("Error fetching top article:", error);
+  }
+});
 // Middleware
 app.use(express.json());
 app.use(cookieParser());

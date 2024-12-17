@@ -1,4 +1,4 @@
-import{React,useState,useEffect,useContext} from "react";
+import { React, useState, useEffect, useContext } from "react";
 import {
   MoreVertical,
   MessageCircle,
@@ -9,38 +9,40 @@ import {
 import SharePostModal from "./SharePostModal";
 import DOMPurify from "dompurify";
 import CommentPopup from "./commentsPopUp.js";
-import { GlobalContext } from "../context/GlobelContext.js"; 
+import { GlobalContext } from "../context/GlobelContext.js";
+import Report from "./report.js";
 
 
 
-
-const SocialCard = ({onClick,item}) => {
+const SocialCard = ({ onClick, item }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCommentPopupOpen, setCommentPopupOpen] = useState(false);
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
   const [likes, setLikes] = useState();
   const [dislikes, setDislikes] = useState();
+  const [showReportButton, setShowReportButton] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
-useEffect(() => {
-      setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
-    }, [setIsAuthUser]);
+  useEffect(() => {
+    setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
+  }, [setIsAuthUser]);
 
 
   function formatDate(isoDateString) {
     const date = new Date(isoDateString);
     const now = new Date();
-    
+
     // Calculate time difference in days
     const timeDiff = now - date;
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-    
+
     // Format time
     const formattedTime = date.toLocaleString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
     });
-  
+
     // Determine day indicator
     let dayIndicator;
     if (daysDiff === 0) {
@@ -50,11 +52,11 @@ useEffect(() => {
     } else {
       dayIndicator = `${daysDiff}d`;
     }
-  
+
     // Combine day and time
     return `${dayIndicator} • ${formattedTime}`;
   }
-  
+
 
   const handleShareClick = () => {
     setIsModalOpen(true);
@@ -75,11 +77,11 @@ useEffect(() => {
           userId: isAuthUser.id, // Pass the user's ID
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to dislike article');
       }
-  
+
       // Assuming the response contains the updated data
       const data = await response.json();
       console.log(data.message);
@@ -90,23 +92,23 @@ useEffect(() => {
       console.error("Error handling dislike:", error);
     }
   };
-  
+
   const handleLike = async () => {
     try {
       const response = await fetch(`http://localhost:4000/api/articles/like/${item._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        },  
+        },
         body: JSON.stringify({
           userId: isAuthUser.id, // Pass the user's ID
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to like article');
       }
-  
+
       const data = await response.json();
       console.log(data.message);
       setDislikes(data.article.dislikes)
@@ -118,7 +120,7 @@ useEffect(() => {
 
   const sanitizedContent = DOMPurify.sanitize(item.title);
   return (
-    <div  className="max-w-xl w-full rounded-3xl overflow-hidden shadow-md bg-SoftMain border border-main/50">
+    <div className="max-w-xl w-full rounded-3xl overflow-hidden shadow-md bg-SoftMain border border-main/50">
       {/* Header */}
       <div onClick={onClick} className="flex flex-row items-center cursor-pointer p-4 pb-2">
         <div className="flex items-center flex-1">
@@ -138,9 +140,9 @@ useEffect(() => {
 
       {/* Content */}
       <div onClick={onClick} className=" cursor-pointer px-4 pt-0">
-      <div
-           className="content-container"
-            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        <div
+          className="content-container"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         ></div>
         <div className="relative w-full rounded-lg overflow-hidden mb-2">
           <img
@@ -155,13 +157,13 @@ useEffect(() => {
         <div className="flex items-center space-x-3">
           <div className="flex rounded-full border border-gray-200 divide-x bg-[#e0d1cc]">
             <button className="flex items-center space-x-1 px-3 py-1"
-            onClick={()=>handleLike()}
+              onClick={() => handleLike()}
             >
               <ArrowBigUp className="w-5 h-5 text-main" />
               <span className="text-sm text-main">Upvote {likes}</span>
             </button>
             <button className="px-3 py-1 hover:bg-[#d4c5c0] rounded-r-full"
-            onClick={()=>handleDisLike()}
+              onClick={() => handleDisLike()}
             >
               <ArrowBigDown className="w-5 h-5 text-main" />
               <span className="text-sm text-main">Downvote {dislikes}</span>
@@ -176,24 +178,42 @@ useEffect(() => {
           </button>
 
           <button className="p-2 hover:bg-gray-50 rounded-full"
-          onClick={() => setCommentPopupOpen(true)}
+            onClick={() => setCommentPopupOpen(true)}
           >
             <MessageCircle className="h-5 w-5 text-main" />
           </button>
           <CommentPopup
-        isOpen={isCommentPopupOpen}
-        articleID={item._id}
-        onClose={() => setCommentPopupOpen(false)}
-      />
+            isOpen={isCommentPopupOpen}
+            articleID={item._id}
+            onClose={() => setCommentPopupOpen(false)}
+          />
         </div>
 
-        <div className="ml-auto">
-          <button className="p-2 hover:bg-gray-50 rounded-full">
+        <div className="ml-auto relative">
+          {/* MoreVertical Button */}
+          <button
+            className="p-2 hover:bg-gray-50 rounded-full"
+            onClick={() => setShowReportButton(!showReportButton)}
+          >
             <MoreVertical className="h-5 w-5 text-main" />
           </button>
+
+          {/* Report Button */}
+          {showReportButton && (
+            <button
+              className="absolute top-full right-0 mt-1 bg-white text-black border border-gray-300 shadow-md hover:bg-gray-100 px-4 py-1 rounded-md text-sm font-medium"
+              onClick={() => setShowReportModal(true)}
+            >
+              Report
+            </button>
+          )}
         </div>
+
       </div>
 
+
+      {/* Report Component Modal */}
+      {showReportModal && <Report item={item} onClose={() => setShowReportModal(false)} />}
       {/* SharePostModal */}
       {isModalOpen && <SharePostModal item={item} onClose={handleCloseModal} />}
     </div>

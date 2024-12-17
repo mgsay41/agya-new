@@ -19,7 +19,8 @@ export default function NewArtical() {
   const [tags, setTags] = useState([]);
   const [adminTags, setAdminTags] = useState([]);
   const [references, setReferences] = useState([]);
-  const [image, setImage] = useState("");
+  const [featuredImage, setFeaturedImage] = useState("");
+  const [firstImage, setfirstImage] = useState("");
   const [newReference, setNewReference] = useState("");
   const [searchText, setSearchText] = useState("");
   const [showUploadPopup, setShowUploadPopup] = useState(false);
@@ -27,16 +28,30 @@ export default function NewArtical() {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchTags();
   }, [setIsAuthUser]);
-
+  useEffect(() => {
+    handleExtractData()
+  }, [content]);
   const handleImageUpload = (file) => {
-    setImage(file);
+    setFeaturedImage(file);
   };
   const handleAddTag = (tag) => {
     if (!tags.includes(tag)) {
       setTags((prevTags) => [...prevTags, tag]);
     }
   };
-
+  const handleExtractData = () => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const firstElement = Array.from(doc.body.childNodes)
+      .find(node => node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim()));
+    const firstLineHTML = firstElement ? firstElement.outerHTML || firstElement.textContent : "No Title";
+    setTitle(firstLineHTML);
+    //console.log(firstLineHTML)
+    const firstImage = doc.querySelector("img")?.src || "No Image";
+    setfirstImage(firstImage);
+    //console.log(firstImage);
+  };
+  
   const handleRemoveTag = (tag) => {
     setTags((prevTags) => prevTags.filter((t) => t !== tag));
   };
@@ -54,7 +69,7 @@ export default function NewArtical() {
         tags: tags,
         references: references,
         authorName: isAuthUser.firstname,
-        image:image,
+        image:featuredImage,
       };
 
       const response = await fetch("http://localhost:4000/api/articles", {
@@ -105,7 +120,7 @@ export default function NewArtical() {
       <Navbar/>
       <form className="articale">
         <div className="mt-8">
-          <RichTextWithTranslate/>
+        <RichTextWithTranslate onEditorChange={(value) => setContent(value)} />
           <h3 className="font-semibold my-5">Featured Image</h3>
           <div className="flex flex-col">
           <div>
@@ -114,7 +129,7 @@ export default function NewArtical() {
                 className="accent-main w-[15px] h-[15px] mr-2"
                 id="use-first-image"
                 name="feat-input"
-                onClick={() => setImage()}
+                onClick={() => setFeaturedImage(firstImage)}
               />
               <label htmlFor="use-first-image">
                 Use first image as featured image

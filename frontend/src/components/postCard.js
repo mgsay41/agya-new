@@ -10,7 +10,7 @@ import SharePostModal from "./SharePostModal";
 import DOMPurify from "dompurify";
 import CommentPopupPost from "./commentsPopUpPost.js";
 import { GlobalContext } from "../context/GlobelContext.js"; 
-
+import Report from "./report.js";
 
 
 
@@ -21,7 +21,8 @@ const PostCard = ({onClick,item}) => {
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
   const [likes, setLikes] = useState();
   const [dislikes, setDislikes] = useState();
-
+  const [showReportButton, setShowReportButton] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
         setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
@@ -185,14 +186,29 @@ const PostCard = ({onClick,item}) => {
             />
           </button>
         </div>
-
-        <div className="ml-auto">
-          <button className="p-2 hover:bg-gray-50 rounded-full">
+        <div className="ml-auto relative">
+          {/* MoreVertical Button */}
+          <button
+            className="p-2 hover:bg-gray-50 rounded-full"
+            onClick={() => setShowReportButton(!showReportButton)}
+          >
             <MoreVertical className="h-5 w-5 text-main" />
           </button>
+
+          {/* Report Button */}
+          {showReportButton && (
+            <button
+              className="absolute top-full right-0 mt-1 bg-white text-black border border-gray-300 shadow-md hover:bg-gray-100 px-4 py-1 rounded-md text-sm font-medium"
+              onClick={() => setShowReportModal(true)}
+            >
+              Report
+            </button>
+          )}
         </div>
       </div>
 
+      {/* Report Component Modal */}
+      {showReportModal && <Report item={item} onClose={() => setShowReportModal(false)} />}
       {/* SharePostModal */}
       {isModalOpen && <SharePostModal item={item} onClose={handleCloseModal} />}
     </div>

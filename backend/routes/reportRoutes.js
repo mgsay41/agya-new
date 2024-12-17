@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Create a new report
 router.post("/", async (req, res) => {
-  const { userId, content, articleId, postId, commentId } = req.body;
+  const { userId, content, articleId, postId, commentId,replyID } = req.body;
 
   try {
     // Validate userId
@@ -23,11 +23,12 @@ router.post("/", async (req, res) => {
 
     // Create a new report
     const newReport = new Report({
-      userId: new mongoose.Types.ObjectId(userId),
+      userId:  new mongoose.Types.ObjectId(userId),
       content,
-      articleId: articleId ? mongoose.Types.ObjectId(articleId) : undefined, // Convert to ObjectId if provided
-      postId: postId ? mongoose.Types.ObjectId(postId) : undefined, // Convert to ObjectId if provided
-      commentId: commentId ? mongoose.Types.ObjectId(commentId) : undefined, // Convert to ObjectId if provided
+      replyId:replyID?new mongoose.Types.ObjectId(replyID) : undefined,
+      articleId: articleId ?new mongoose.Types.ObjectId(articleId) : undefined, // Convert to ObjectId if provided
+      postId: postId ? new mongoose.Types.ObjectId(postId) : undefined, // Convert to ObjectId if provided
+      commentId: commentId ? new mongoose.Types.ObjectId(commentId) : undefined, // Convert to ObjectId if provided
     });
 
     // Save the report
@@ -35,6 +36,7 @@ router.post("/", async (req, res) => {
     res.status(201).json(newReport);
   } catch (err) {
     console.error(err);
+    console.error(err.message);
     res.status(500).json({ error: err.message });
   }
 });

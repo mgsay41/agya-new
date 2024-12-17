@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Article from "../models/Article.js";
-
+import TopArticle from "../models/topArticles.js";
 const router = express.Router();
 
 // Create a new article
@@ -48,7 +48,21 @@ router.post("/", async (req, res) => {
     
   }
 });
+// get the highest article
+router.get("/top-article", async (req, res) => {
+  try {
+    const topArticle = await TopArticle.findOne();
 
+    if (!topArticle) {
+      return res.status(404).json({ message: "No featured article found." });
+    }
+
+    return res.status(200).json(topArticle);
+  } catch (error) {
+    console.error("Error fetching featured article:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+});
 // Get all articles
 router.get("/", async (req, res) => {
   try {

@@ -6,7 +6,9 @@ const ReportSchema = new mongoose.Schema({
   articleId: { type: mongoose.Schema.Types.ObjectId, ref: "Article" },
   postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
   commentId: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
+  replyId: { type: mongoose.Schema.Types.ObjectId, ref: "Reply" },
   createdAt: { type: Date, default: Date.now },
+  type: { type: String, default: "report" }
 });
 
 const Report = mongoose.model("Report", ReportSchema);

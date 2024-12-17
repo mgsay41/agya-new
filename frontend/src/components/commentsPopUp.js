@@ -1,14 +1,15 @@
-import React, { useState,useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { IoSend } from "react-icons/io5";
 import { GlobalContext } from "../context/GlobelContext.js";
-const CommentPopup = ({ isOpen, onClose ,articleID }) => {
+const CommentPopup = ({ isOpen, onClose, articleID }) => {
   const [comments, setComments] = useState([]);
-
   const [newComment, setNewComment] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
+  const [commentID, setCommentID] = useState([]);
+  const [replies, setReplies] = useState([]);
   const [replyText, setReplyText] = useState("");
   const { setIsAuthUser, isAuthUser } = useContext(GlobalContext);
-  
+
   useEffect(() => {
     setIsAuthUser(JSON.parse(localStorage.getItem("userInfo")));
   }, [setIsAuthUser]);
@@ -29,8 +30,53 @@ const CommentPopup = ({ isOpen, onClose ,articleID }) => {
 
     fetchComments();
   }, [articleID]);
+  useEffect(() => {
+    const fetchReplies = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/api/replies/${commentID}`);
 
+        if (!response.ok) {
+          throw new Error("Failed to fetch replies");
+        }
+
+        const data = await response.json();
+        setReplies(data); // Set the replies in state
+      } catch (error) {
+        console.error("Error fetching replies:", error);
+      }
+    };
+
+    fetchReplies();
+  }, [commentID]);
   // Add a new comment
+  const handleReply = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/replies/${replyingTo}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: isAuthUser.id,  // Pass the userId
+          content: replyText,  // Pass the content of the reply
+        }),
+      });
+
+      // Check if the response is not okay
+      if (!response.ok) {
+        throw new Error('Failed to post reply');
+      }
+
+      // Parse the JSON response
+      const data = await response.json();
+      console.log('Reply posted successfully:', data);
+
+      // Optionally, update state/UI with the new reply
+    } catch (error) {
+      console.error('Error posting reply:', error);
+    }
+  };
+
   const handleCommentSubmit = async () => {
     if (newComment.trim() !== "") {
       try {
@@ -73,25 +119,23 @@ const CommentPopup = ({ isOpen, onClose ,articleID }) => {
         <h3 className="text-lg font-semibold mb-4">Comments</h3>
         <div className="space-y-6">
           {comments.map((comment) => (
-            <div key={comment.id} className="space-y-4">
+            <div key={comment._id} className="space-y-4">
               <div className="border-b pb-4">
                 <div className="flex items-start space-x-4">
                   <img
                     className="w-10 h-10 rounded-full"
-                    src="./avatar.jpeg"                //{comment.userId.image}
-                    alt={comment.name}
+                    src="./avatar.jpeg"  // You can use comment.userId.image here
+                    alt={comment.userId.firstname}
                   />
                   <div className="flex-1">
-                    <p className="font-semibold">{comment.userId.firstname} {comment.userId.lastname} </p>
+                    <p className="font-semibold">{comment.userId.firstname} {comment.userId.lastname}</p>
                     <p>{comment.content}</p>
                   </div>
                   <div className="flex flex-col items-end ml-4">
                     <p className="text-DateTime text-sm">{comment.createdAt}</p>
                     <button
                       className="bg-main text-white text-sm px-4 py-2 rounded-lg mt-2"
-                      onClick={() =>
-                        setReplyingTo(comment.id === replyingTo ? null : comment.id)
-                      }
+                      onClick={() => setReplyingTo(comment._id === replyingTo ? null : comment._id)}
                     >
                       Reply
                     </button>
@@ -99,7 +143,7 @@ const CommentPopup = ({ isOpen, onClose ,articleID }) => {
                 </div>
               </div>
 
-              {replyingTo === comment.id && (
+              {replyingTo === comment._id && (
                 <div className="relative flex items-center gap-2">
                   <textarea
                     className="w-full rounded-lg p-3 text-main bg-[#E4F5E4] pr-16 resize-none focus:outline-none"
@@ -110,12 +154,32 @@ const CommentPopup = ({ isOpen, onClose ,articleID }) => {
                   ></textarea>
                   <button
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-main px-4 py-2 rounded-full hover:bg-opacity-80 flex items-center"
-                    onClick={() => handleReplySubmit(comment.id)}
+                    onClick={() => {
+                      handleReply();
+                      setReplies([...replies, replyText]);
+                    }}
                   >
                     <IoSend className="mr-2" />
                   </button>
                 </div>
               )}
+
+              {/* Render the replies for this comment */}
+              {replies[comment._id] && replies[comment._id].map((reply, index) => (
+                <div key={index} className="ml-12 mt-2">
+                  <div className="flex items-start space-x-4">
+                    <img
+                      className="w-8 h-8 rounded-full"
+                      src="./avatar.jpeg"  // You can replace with reply.user image
+                      alt={reply.userId}
+                    />
+                    <div className="flex-1">
+                      <p className="font-semibold">{reply.user}</p>     {/*want to have the user name and image */}
+                      <p>{reply.content}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
