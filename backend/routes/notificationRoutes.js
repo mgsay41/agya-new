@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
 
   try {
     const newNotification = new Notification({
-      userId: mongoose.Types.ObjectId(userId), // Ensure the userId is an ObjectId
+      userId: new mongoose.Types.ObjectId(userId),
       content,
       category,
     });
@@ -26,20 +26,20 @@ router.get("/:userId", async (req, res) => {
   try {
     const notifications = await Notification.find({
       userId: req.params.userId,
-    }).sort({ createdAt: -1 }); // Sort by newest notifications first
+    }).sort({ createdAt: -1 });
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Mark notification as read
-router.put("/:id/read", async (req, res) => {
+// Mark notification as read (Updated to PATCH)
+router.patch("/:id/read", async (req, res) => {
   try {
     const updatedNotification = await Notification.findByIdAndUpdate(
       req.params.id,
       { isRead: true },
-      { new: true } // Return the updated document
+      { new: true }
     );
     if (!updatedNotification) {
       return res.status(404).json({ message: "Notification not found" });

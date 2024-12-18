@@ -4,10 +4,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        main: "#6E2617", // Main Color
+        main: "#005F6A", // Main Color
         background: "#fefdfc", // Background Color
         secondary: "#e6e6d7", // Secondary Color
-        SoftMain: "#f9eae7", // Soft Main Color
+        SoftMain: "#F7FFFC", // Soft Main Color
         accent: "#001F34", // Accent Color
         "main-font": "#010200", // Main Font Color
         "secondary-font": "#fefdfc", // Secondary Font Color

@@ -149,17 +149,17 @@ const UserProfile = () => {
                 {activity.status && (
                   <div
                     className={`absolute top-12 ${
-                      activity.status === "Rejected by Admin" ? "left-4" : "left-14"
+                      activity.status === "rejected" ? "left-4" : "left-14"
                     } p-4 text-sm flex justify-center items-center gap-2 font-medium text-white rounded-lg bg-white`}
                   >
-                    {activity.status === "Rejected by Admin" ? (
+                    {activity.status === "rejected" ? (
                       <FileX2 className="w-5 h-5 text-red-600" />
                     ) : (
                       <Clock2 className="w-5 h-5 text-green-600" />
                     )}
                     <span
                       className={
-                        activity.status === "Rejected by Admin"
+                        activity.status === "rejected"
                           ? "text-red-600 font-bold"
                           : "text-green-600 font-bold"
                       }
