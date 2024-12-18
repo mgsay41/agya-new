@@ -1,23 +1,95 @@
-import React, { useState } from "react";
-import { Edit3 } from "lucide-react"; // Importing the Lucide edit icon
+import React, { useState, useEffect } from "react";
+import { Edit3 } from "lucide-react";
+import api from "../axios"; // Import your configured axios instance
 
 const EditProfile = () => {
-  const [formData, setFormData] = useState({
-    firstName: "Salma",
-    lastName: "Nofal",
-    affiliation: "UI/UX Designer",
-    academicTitle: "CS Graduate",
-  });
+  const [userInfo, setUserInfo] = useState(null); // State to hold user info
+  const [formData, setFormData] = useState({}); // State for form inputs
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [selectedImage, setSelectedImage] = useState(null); // State for the uploaded image
+
+  useEffect(() => {
+    // Step 1: Get user info from localStorage
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      // Fetch full user data from the backend
+      const fetchUserData = async () => {
+        try {
+          const response = await api.get(`/users/${user.id}`); // Replace with your backend endpoint
+          setUserInfo(response.data);
+          setFormData({
+            firstname: response.data.firstname || "",
+            lastname: response.data.lastname || "",
+            affiliation: response.data.affiliation || "",
+            academic_title: response.data.academic_title || "",
+            image: response.data.image || "",
+          });
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchUserData();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Profile updated!");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData({ ...formData, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formDataToSend = { ...formData };
+  
+    try {
+      // Handle image upload if a new image is selected
+      if (selectedImage) {
+        const imageData = new FormData();
+        imageData.append("image", selectedImage);
+  
+        const imageUploadResponse = await api.post(`/users/${userInfo.id}/upload-image`, imageData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+  
+        formDataToSend.image = imageUploadResponse.data.imageUrl;
+      }
+  
+      // Send the form data for updating the user info
+      const response = await api.put(`/users/${userInfo.id}`, formDataToSend); // Update user data
+      alert("Profile updated successfully!");
+      setUserInfo(response.data); // Update state with updated user info
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile.");
+    }
+  };
+  
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading...</div>;
+  }
+
+  if (!userInfo) {
+    return <div className="text-center py-8">User not found. Please log in again.</div>;
+  }
 
   return (
     <div className="flex flex-col items-center py-8 bg-white min-h-screen">
@@ -27,18 +99,25 @@ const EditProfile = () => {
       {/* Profile Image */}
       <div className="relative">
         <img
-          src="https://via.placeholder.com/150"
+          src={formData.image || "https://via.placeholder.com/150"} // Replace placeholder with user image
           alt="Profile"
-          className="w-36 h-36 rounded-full object-cover" // Increased size to 150x150
+          className="w-36 h-36 rounded-full object-cover"
         />
-        <div className="absolute bottom-0 right-0 bg-white border border-main p-2 rounded-full cursor-pointer hover:bg-gray-100">
+        <label htmlFor="profileImage" className="absolute bottom-0 right-0 bg-white border border-main p-2 rounded-full cursor-pointer hover:bg-gray-100">
           <Edit3 className="w-5 h-5 text-main" />
-        </div>
+        </label>
+        <input
+          id="profileImage"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageChange}
+        />
       </div>
 
       {/* Profile Name */}
       <h3 className="text-lg font-medium text-gray-800 mt-4">
-        {formData.firstName} {formData.lastName}
+        {formData.firstname} {formData.lastname}
       </h3>
 
       {/* Form */}
@@ -53,10 +132,10 @@ const EditProfile = () => {
           </label>
           <input
             type="text"
-            name="firstName"
-            value={formData.firstName}
+            name="firstname"
+            value={formData.firstname}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-brown-500 focus:border-brown-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main focus:border-main"
           />
         </div>
 
@@ -67,10 +146,10 @@ const EditProfile = () => {
           </label>
           <input
             type="text"
-            name="lastName"
-            value={formData.lastName}
+            name="lastname"
+            value={formData.lastname}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-brown-500 focus:border-brown-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main focus:border-main"
           />
         </div>
 
@@ -84,7 +163,7 @@ const EditProfile = () => {
             name="affiliation"
             value={formData.affiliation}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-brown-500 focus:border-brown-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main focus:border-main"
           />
         </div>
 
@@ -95,17 +174,17 @@ const EditProfile = () => {
           </label>
           <input
             type="text"
-            name="academicTitle"
-            value={formData.academicTitle}
+            name="academic_title"
+            value={formData.academic_title}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-brown-500 focus:border-brown-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-main focus:border-main"
           />
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-main text-white py-2 px-4 rounded-md hover:bg-brown-700 focus:ring focus:ring-brown-400"
+          className="w-full bg-main text-white py-2 px-4 rounded-md hover:bg-brown-700 focus:ring focus:ring-main"
         >
           Update
         </button>

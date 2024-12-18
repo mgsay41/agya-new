@@ -59,7 +59,7 @@ const LatestActivities = () => {
           ) : (
             activities.map((activity, index) => (
               <div key={index} className="flex items-center gap-2">
-                <Bookmark className="h-4 w-4" style={{ color: "#8B1D1D" }} />
+                <Bookmark className="h-4 w-4 text-main" />
                 <button
                   className="text-[11px] underline text-main hover:underline"
                   onClick={() => {

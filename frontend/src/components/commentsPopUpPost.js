@@ -110,7 +110,7 @@ const CommentPopupPost = ({ isOpen, onClose ,postID }) => {
                   ></textarea>
                   <button
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-main px-4 py-2 rounded-full hover:bg-opacity-80 flex items-center"
-                    onClick={() => handleReplySubmit(comment.id)}
+                    // onClick={() => handleReplySubmit(comment.id)}
                   >
                     <IoSend className="mr-2" />
                   </button>
