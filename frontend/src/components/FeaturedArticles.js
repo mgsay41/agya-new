@@ -5,29 +5,43 @@ const FeaturedArticles = () => {
 
   const fetchFeaturedArticles = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/FeaturedArticles/", {
+      // Fetch the list of featured articles
+      const response = await fetch("http://localhost:4000/api/FeaturedArticles/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
-      const data = await response.json();
-
-      // Check if data is an array before setting the state
-      if (Array.isArray(data)) {
-        setFeaturedArticles(data);
-      } else {
-        console.error("Fetched data is not an array:", data);
+  
+      const { data } = await response.json(); // Assuming the API returns { data: [array of featured articles] }
+  
+      console.log("this is the data"); 
+      console.log(data); 
+  
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid response format: Expected an array of featured articles");
       }
+  
+      // Extract all populated article objects from the response
+      const articles = data.flatMap((item) => item.articleID);
+  
+      // Ensure that the extracted articles array is valid
+      if (!Array.isArray(articles) || articles.length === 0) {
+        throw new Error("No articles found in the response data");
+      }
+  
+      // Set the articles to state
+      setFeaturedArticles(articles);
     } catch (error) {
       console.error("Failed to fetch featured articles:", error.message);
     }
   };
+  
+  
 
   useEffect(() => {
     fetchFeaturedArticles();
@@ -57,7 +71,7 @@ const FeaturedArticles = () => {
                 <h2 className="mb-1 text-xs font-bold leading-tight text-gray-900">
                   "{article.title}"
                 </h2>
-                <p className="text-gray-500 text-xs">{article.author}</p>
+                <p className="text-gray-500 text-xs">{article.authorName}</p>
               </div>
             </div>
           ))}

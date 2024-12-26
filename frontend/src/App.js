@@ -14,7 +14,9 @@ import Home from "./pages/home";
 import Activities from "./pages/Activites";
 import EditProfile from "./pages/EditProfile";
 import ArticleDetails from "./pages/ArticlesDetails";
-
+import PostDetails from "./pages/PostsDetails";
+import Search from "./pages/search";
+import Filter from "./pages/filter";
 const App = () => {
   return (
     <>
@@ -25,15 +27,25 @@ const App = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/help" element={<Help />} />
           <Route path="/profile" element={<UserProfile />} />
-          <Route path="/activities" element={<Activities />} />
           <Route path="/editprofile" element={<EditProfile/>}/>
         </Route>
         <Route path="/edit-profile" element={<EditProfile/>}/>
         <Route path="/new-article" element={<NewArtical/>}/>
+      <Route path="/article/search" element={<Search/>}/>
+      <Route path="/article/filter" element={<Filter/>}/>
+
         <Route path="/article" element={<ActivityDetailsLayout/>}>
           <Route path="/article/new-article" element={<AddActivity/>} />
           <Route path="/article/:id" element={<ArticleDetails/>}/>
         </Route>
+        <Route path="/posts" element={<ActivityDetailsLayout/>}>
+          <Route path="/posts/:id" element={<PostDetails/>}/>
+        </Route>
+
+        <Route path="/activities" element={<ActivityDetailsLayout/>}>
+          <Route path="/activities" element={<Activities />} />
+        </Route>
+
         <Route path="/activity" element={<ActivityDetailsLayout/>}>
           <Route path="/activity/new-activity" element={<AddActivity/>} />
           <Route path="/activity/edit-activity" element={<EditActivity/>} />

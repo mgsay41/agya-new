@@ -37,6 +37,8 @@ const EditProfile = () => {
     }
   }, []);
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -63,24 +65,28 @@ const EditProfile = () => {
       // Handle image upload if a new image is selected
       if (selectedImage) {
         const imageData = new FormData();
-        imageData.append("image", selectedImage);
+        imageData.append("file", selectedImage); // The key should match the multer configuration
   
-        const imageUploadResponse = await api.post(`/users/${userInfo.id}/upload-image`, imageData, {
+        // Upload the image to the backend
+        const imageUploadResponse = await api.post(`/uploads/profiles/${userInfo._id}`, imageData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
   
-        formDataToSend.image = imageUploadResponse.data.imageUrl;
+        // Update the formData with the new image URL from the response
+        formDataToSend.image = imageUploadResponse.data.user.image;
       }
   
-      // Send the form data for updating the user info
-      const response = await api.put(`/users/${userInfo.id}`, formDataToSend); // Update user data
+      // Update the user's other profile data
+      const response = await api.put(`/users/${userInfo._id}`, formDataToSend);
+  
       alert("Profile updated successfully!");
-      setUserInfo(response.data); // Update state with updated user info
+      setUserInfo(response.data); // Update the local state with the updated user info
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
     }
   };
+  
   
 
   if (isLoading) {
