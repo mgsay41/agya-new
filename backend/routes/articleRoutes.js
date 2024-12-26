@@ -10,7 +10,6 @@ router.post("/", async (req, res) => {
 
   // Validate references format
   if (references && !Array.isArray(references)) {
-    console.log("jjjjjj")
     return res
       .status(400)
       .json({ error: "References must be an array of objects" });
@@ -48,6 +47,111 @@ router.post("/", async (req, res) => {
     
   }
 });
+
+router.get("/articles", async (req, res) => {
+  const page = req.query.page - 1 || 0;
+  const limit = req.query.limit || 9;
+  const search = req.query.search || "";
+  const articles = await Article.find({
+    title: { $regex: ".*" + search + ".*", $options: "i" },
+  })
+    .skip(page * limit)
+    .limit(limit)
+    .populate(
+      "authorId",
+      "firstname lastname"
+    );
+  const numberOfArticles = await Article.countDocuments({
+    title: { $regex: search, $options: "i" },
+  }).populate('userId', 'firstname lastname')
+  .skip(page * limit)
+  .limit(limit);
+  const pageCount = parseInt(numberOfArticles / limit);
+
+  if (articles) {
+      return res.json({
+        success: true,
+        numberOfArticles,
+        page: page + 1,
+        pageCount: pageCount + 1,
+        data: articles,
+      });
+    } else {
+      return res.json({
+        success: false,
+      });
+    }
+});
+
+router.get("/articles/search", async (req, res) => {
+  const page = req.query.page - 1 || 0;
+  const limit = req.query.limit || 9;
+  const search = req.query.search || "";
+  const articles = await Article.find({
+    title: { $regex: ".*" + search + ".*", $options: "i" },
+  })
+    .skip(page * limit)
+    .limit(limit)
+    .populate(
+      "authorId",
+      "firstname lastname"
+    );
+  const numberOfArticles = await Article.countDocuments({
+    title: { $regex: search, $options: "i" },
+  }).populate('userId', 'firstname lastname')
+  .skip(page * limit)
+  .limit(limit);
+  const pageCount = parseInt(numberOfArticles / limit);
+  
+  if (articles) {
+      return res.json({
+        success: true,
+        numberOfArticles,
+        page: page + 1,
+        pageCount: pageCount + 1,
+        data: articles,
+      });
+    } else {
+      return res.json({
+        success: false,
+      });
+    }
+});
+router.get("/articles/filter", async (req, res) => {
+  const page = req.query.page - 1 || 0;
+  const limit = req.query.limit || 9;
+  const filter = req.query.filter || "";
+  const articles = await Article.find({
+    tags: filter
+  })
+    .skip(page * limit)
+    .limit(limit)
+    .populate(
+      "authorId",
+      "firstname lastname"
+    );
+  const numberOfArticles = await Article.countDocuments({
+    tags: { $regex: filter, $options: "i" },
+  }).populate('userId', 'firstname lastname')
+  .skip(page * limit)
+  .limit(limit);
+  const pageCount = parseInt(numberOfArticles / limit);
+  
+  if (articles) {
+      return res.json({
+        success: true,
+        numberOfArticles,
+        page: page + 1,
+        pageCount: pageCount + 1,
+        data: articles,
+      });
+    } else {
+      return res.json({
+        success: false,
+      });
+    }
+});
+
 
 // Get all articles
 router.get("/", async (req, res) => {

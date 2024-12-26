@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 const ReportSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  username: { type: String, required: true }, // Store the user's name
+  userImage: { type: String, required: true },
   content: { type: String, required: true },
   articleId: { type: mongoose.Schema.Types.ObjectId, ref: "Article" },
   postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },

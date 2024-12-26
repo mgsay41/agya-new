@@ -21,6 +21,19 @@ import messageRoutes from "./routes/messageRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import TagsRoutes from "./routes/TagsRoutes.js";
 import FeaturedRoutes from "./routes/featuredArticleRoute.js";
+import profileuploadRoutes from "./routes/profileuploads.js";
+import articleuploadRoutes from "./routes/articleuploads.js";
+
+
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Resolve the current directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 const app = express();
 
 // Middleware
@@ -36,6 +49,8 @@ app.use(
   })
 );
 app.use(morgan("dev")); // Log HTTP requests
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Database Connection
 const connectDB = async () => {
@@ -69,6 +84,8 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/tags", TagsRoutes);
 app.use("/api/FeaturedArticles", FeaturedRoutes);
+app.use("/api/uploads/profiles", profileuploadRoutes);
+app.use("/api/uploads/articles", articleuploadRoutes);
 
 // Root Route
 app.get("/", (req, res) => {

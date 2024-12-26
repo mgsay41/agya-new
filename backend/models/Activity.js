@@ -25,6 +25,7 @@ const activitySchema = new mongoose.Schema(
     timeline: { type: String },
     activityExLink: { type: String },
     apply: { type: String },
+    isAdmin: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["pending", "rejected", "passed"],

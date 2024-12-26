@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
 
   try {
     const newMessage = new Message({
-      userId: mongoose.Types.ObjectId(userId),
+      userId: new mongoose.Types.ObjectId(userId), // Add `new`
       subject,
       message,
       senderName,
@@ -22,6 +22,20 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+router.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const messages = await Message.find({
+      userId: new mongoose.Types.ObjectId(userId), // Add `new`
+    }).sort({ createdAt: -1 });
+    res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // Get all messages for a specific user
 router.get("/:userId", async (req, res) => {

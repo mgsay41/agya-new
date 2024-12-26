@@ -6,31 +6,39 @@ const router = express.Router();
 
 // Create a new report
 router.post("/", async (req, res) => {
-  const { userId, content, articleId, postId, commentId } = req.body;
+  const { username, userImage, content, articleId, postId, commentId } = req.body;
 
   try {
-    // Validate userId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: "Invalid userId format" });
+    if (!username || !userImage || !content) {
+      return res.status(400).json({ error: "username, userImage, and content are required" });
     }
 
-    // Ensure at least one of articleId, postId, or commentId is provided
     if (!articleId && !postId && !commentId) {
       return res.status(400).json({
         error: "At least one of articleId, postId, or commentId is required",
       });
     }
 
-    // Create a new report
+    // Validate ObjectIds
+    if (articleId && !mongoose.Types.ObjectId.isValid(articleId)) {
+      return res.status(400).json({ error: "Invalid articleId" });
+    }
+    if (postId && !mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: "Invalid postId" });
+    }
+    if (commentId && !mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(400).json({ error: "Invalid commentId" });
+    }
+
     const newReport = new Report({
-      userId: new mongoose.Types.ObjectId(userId),
+      username,
+      userImage,
       content,
-      articleId: articleId ? mongoose.Types.ObjectId(articleId) : undefined, // Convert to ObjectId if provided
-      postId: postId ? mongoose.Types.ObjectId(postId) : undefined, // Convert to ObjectId if provided
-      commentId: commentId ? mongoose.Types.ObjectId(commentId) : undefined, // Convert to ObjectId if provided
+      articleId: articleId ? new mongoose.Types.ObjectId(articleId) : undefined,
+      postId: postId ? new mongoose.Types.ObjectId(postId) : undefined,
+      commentId: commentId ? new mongoose.Types.ObjectId(commentId) : undefined,
     });
 
-    // Save the report
     await newReport.save();
     res.status(201).json(newReport);
   } catch (err) {
@@ -38,6 +46,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Get all reports
 router.get("/", async (req, res) => {

@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 });
 
 // Get all tags
-router.get("/", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const tags = await Tag.find();
     res.status(200).json(tags);

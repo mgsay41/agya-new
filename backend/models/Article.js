@@ -10,13 +10,13 @@ const ArticleSchema = new mongoose.Schema({
     required: true,
   },
   tags: { type: [String] }, // Array of strings
-  references: {type: [String]},
+  references: {type: [String],required: true},
   likes: { type: Number, default: 0 },
   dislikes: { type: Number, default: 0 },
   likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdAt: { type: Date, default: Date.now },
-  image:{ type: String},
+  featuredImage:{ type: String},
   type: { type: String, default: "article" }
 
 });
